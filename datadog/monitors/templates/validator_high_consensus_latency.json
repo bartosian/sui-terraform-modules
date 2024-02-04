@@ -1,0 +1,28 @@
+{
+    "name": "High Consensus Latency",
+    "type": "query alert",
+    "query": "avg(last_15m):avg:sui.validator.sequencing_certificate_latency.sum{env:testnet, service:validator}.as_rate() / avg:sui.validator.sequencing_certificate_latency.count{env:testnet, service:validator}.as_rate() > 10",
+    "message": "```\n{{!-- Warning Section --}}\n{{#is_warning}}\n{{override_priority 'P2'}}\n🔔\n{{/is_warning}}\n\n{{!-- Warning Recovery Section --}}\n{{#is_warning_recovery}}\n✅\n{{/is_warning_recovery}}\n\n{{!-- Alert Section --}}\n{{#is_alert}}\n{{override_priority 'P1'}}\n🚨\n{{/is_alert}}\n\n{{!-- Alert Recovery Section --}}\n{{#is_alert_recovery}}\n✅\n{{/is_alert_recovery}}\n\n-------------------------------------------------\n🕒 *Triggered at (UTC):* {{last_triggered_at}}\n```",
+    "tags": [
+        "env:testnet",
+        "service:validator",
+        "chain_id:4c78adac",
+        "name:bartestnet"
+    ],
+    "options": {
+        "thresholds": {
+            "critical": 10,
+            "warning": 8
+        },
+        "notify_audit": false,
+        "include_tags": false,
+        "notify_no_data": true,
+        "no_data_timeframe": 30,
+        "evaluation_delay": 300,
+        "notification_preset_name": "hide_handles",
+        "new_host_delay": 300,
+        "silenced": {}
+    },
+    "priority": 1,
+    "restricted_roles": null
+}

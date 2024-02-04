@@ -1,0 +1,35 @@
+{
+    "name": "Low Rounds Progression",
+    "type": "query alert",
+    "query": "change(max(last_5m),last_5m):max:sui.validator.current_round{env:testnet, service:validator} <= 0",
+    "message": "```\n{{!-- Warning Section --}}\n{{#is_warning}}\n{{override_priority 'P2'}}\n🔔\n{{/is_warning}}\n\n{{!-- Warning Recovery Section --}}\n{{#is_warning_recovery}}\n✅\n{{/is_warning_recovery}}\n\n{{!-- Alert Section --}}\n{{#is_alert}}\n{{override_priority 'P1'}}\n🚨\n{{/is_alert}}\n\n{{!-- Alert Recovery Section --}}\n{{#is_alert_recovery}}\n✅\n{{/is_alert_recovery}}\n\n-------------------------------------------------\n🕒 *Triggered at (UTC):* {{last_triggered_at}}\n```",
+    "tags": [
+        "env:testnet",
+        "service:validator",
+        "chain_id:4c78adac",
+        "name:bartestnet"
+    ],
+    "options": {
+        "thresholds": {
+            "critical": 0,
+            "critical_recovery": 1
+        },
+        "notify_audit": false,
+        "include_tags": false,
+        "notify_no_data": true,
+        "no_data_timeframe": 10,
+        "evaluation_delay": 300,
+        "notification_preset_name": "hide_handles",
+        "renotify_interval": 30,
+        "renotify_statuses": [
+            "alert",
+            "no data"
+        ],
+        "escalation_message": "",
+        "renotify_occurrences": 3,
+        "new_host_delay": 300,
+        "silenced": {}
+    },
+    "priority": 1,
+    "restricted_roles": null
+}
