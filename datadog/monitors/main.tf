@@ -78,6 +78,7 @@ locals {
       }
     }
   }
+  shared_tags = ["service:${var.service}", "env:${var.environment}", "chain_id:${var.chain_id}", "name:${var.name}"]
 }
 
 # Resource: Datadog Monitor for SUI Validator Metrics

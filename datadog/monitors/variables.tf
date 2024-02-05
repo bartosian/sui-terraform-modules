@@ -37,6 +37,40 @@ variable "renotify_statuses" {
   type        = list(string)
   description = "Defines the alert statuses (e.g., 'alert', 'warn', 'no data') that trigger re-notifications, allowing for targeted follow-ups on specific conditions."
   default     = ["alert", "warn", "no data"]
+
+  validation {
+    condition = alltrue([
+                  for status in var.renotify_statuses : 
+                  contains(["alert", "warn", "no data"], status)
+                ])
+    error_message = "Each status in 'renotify_statuses' must be one of the following values: 'alert', 'warn', 'no data'."
+  }
+}
+
+variable "notification_targets" {
+  type        = map(list(string))
+  default     = {}
+  description = "A map specifying notification targets for different alert thresholds. It allows defining custom notification channels for 'critical' and 'warning' alerts, ensuring appropriate alert routing. Each channel should be specified with a unique identifier, prefixed with '@'. Format: {'critical': ['@channel1', '@user'], 'warning': ['@channel2']}."
+
+  validation {
+    condition = can(var.notification_targets) && alltrue([
+                  can(tomap(var.notification_targets)),
+                  alltrue([
+                    for key, value in var.notification_targets : 
+                    contains(["critical", "warning"], key) && 
+                    can(toset(value)) && 
+                    alltrue([
+                      for target in value : regex("^@[0-9a-zA-Z-_]+$", target)
+                    ])
+                  ])
+                ])
+    error_message = "The 'notification_targets' map must include only 'critical' and 'warning' keys with lists of notification channel identifiers, each starting with '@'. Ensure the map is not empty and all identifiers are correctly formatted."
+  }
+}
+
+variable "tags" {
+  type        = list(string)
+  description = "A list of tags to be associated with the Datadog monitors. Tags are key-value pairs that help in categorizing and filtering monitors across different environments, teams, or service types, enhancing manageability and visibility."
 }
 
 variable "high_consensus_latency_enabled" {
@@ -52,15 +86,25 @@ variable "high_consensus_latency_message" {
 }
 
 variable "high_consensus_latency_aggregator" {
-  description = "Aggregation method (e.g., 'avg') for evaluating consensus latency over the specified timeframe, crucial for identifying performance trends."
   type        = string
+  description = "Aggregation method for evaluating consensus latency over the specified timeframe, crucial for identifying performance trends. Valid options are 'min', 'max', 'avg'."
   default     = "avg"
+
+  validation {
+    condition     = contains(["min", "max", "avg"], var.high_consensus_latency_aggregator)
+    error_message = "The 'high_consensus_latency_aggregator' must be one of the following values: 'min', 'max', 'avg'."
+  }
 }
 
 variable "high_consensus_latency_timeframe" {
-  description = "Time window ('last_5m', etc.) for assessing High Consensus Latency, setting the scope for performance evaluation of the Sui validator."
   type        = string
+  description = "Time window for assessing High Consensus Latency, setting the scope for performance evaluation of the Sui validator. Valid options are 'last_1m', 'last_5m', 'last_10m', 'last_15m', 'last_30m', 'last_1h', 'last_2h', 'last_4h', 'last_1d'."
   default     = "last_5m"
+
+  validation {
+    condition     = contains(["last_1m", "last_5m", "last_10m", "last_15m", "last_30m", "last_1h", "last_2h", "last_4h", "last_1d"], var.high_consensus_latency_timeframe)
+    error_message = "The 'high_consensus_latency_timeframe' must be one of the following values: 'last_1m', 'last_5m', 'last_10m', 'last_15m', 'last_30m', 'last_1h', 'last_2h', 'last_4h', 'last_1d'."
+  }
 }
 
 variable "high_consensus_latency_threshold_critical" {
@@ -89,12 +133,22 @@ variable "high_owned_objects_certificates_execution_latency_aggregator" {
   description = "Determines how execution latency data is aggregated (e.g., 'avg'), essential for accurate performance assessment over time."
   type        = string
   default     = "avg"
+
+  validation {
+    condition     = contains(["min", "max", "avg"], var.high_owned_objects_certificates_execution_latency_aggregator)
+    error_message = "The 'high_owned_objects_certificates_execution_latency_aggregator' must be one of the following values: 'min', 'max', 'avg'."
+  }
 }
 
 variable "high_owned_objects_certificates_execution_latency_timeframe" {
   description = "Defines the observation period for execution latency monitoring, vital for identifying and addressing performance issues promptly."
   type        = string
   default     = "last_5m"
+
+  validation {
+    condition     = contains(["last_1m", "last_5m", "last_10m", "last_15m", "last_30m", "last_1h", "last_2h", "last_4h", "last_1d"], var.high_owned_objects_certificates_execution_latency_timeframe)
+    error_message = "The 'high_owned_objects_certificates_execution_latency_timeframe' must be one of the following values: 'last_1m', 'last_5m', 'last_10m', 'last_15m', 'last_30m', 'last_1h', 'last_2h', 'last_4h', 'last_1d'."
+  }
 }
 
 variable "high_owned_objects_certificates_execution_latency_threshold_critical" {
@@ -123,12 +177,22 @@ variable "high_shared_objects_certificates_execution_latency_aggregator" {
   description = "Aggregation strategy (e.g., 'avg') for latency metrics, crucial for a balanced view of network performance across time intervals."
   type        = string
   default     = "avg"
+
+  validation {
+    condition     = contains(["min", "max", "avg"], var.high_shared_objects_certificates_execution_latency_aggregator)
+    error_message = "The 'high_shared_objects_certificates_execution_latency_aggregator' must be one of the following values: 'min', 'max', 'avg'."
+  }
 }
 
 variable "high_shared_objects_certificates_execution_latency_timeframe" {
   description = "Specifies the monitoring window for evaluating execution latency, essential for timely detection of performance degradation."
   type        = string
   default     = "last_5m"
+
+  validation {
+    condition     = contains(["last_1m", "last_5m", "last_10m", "last_15m", "last_30m", "last_1h", "last_2h", "last_4h", "last_1d"], var.high_shared_objects_certificates_execution_latency_timeframe)
+    error_message = "The 'high_shared_objects_certificates_execution_latency_timeframe' must be one of the following values: 'last_1m', 'last_5m', 'last_10m', 'last_15m', 'last_30m', 'last_1h', 'last_2h', 'last_4h', 'last_1d'."
+  }
 }
 
 variable "high_shared_objects_certificates_execution_latency_threshold_critical" {
@@ -157,12 +221,22 @@ variable "low_certificate_creation_rate_aggregator" {
   description = "Aggregator function (e.g., 'avg') for calculating the certificate creation rate, important for accurate monitoring of validator activity."
   type        = string
   default     = "avg"
+
+  validation {
+    condition     = contains(["min", "max", "avg"], var.low_certificate_creation_rate_aggregator)
+    error_message = "The 'low_certificate_creation_rate_aggregator' must be one of the following values: 'min', 'max', 'avg'."
+  }
 }
 
 variable "low_certificate_creation_rate_timeframe" {
   description = "Observation period for certificate creation rate, critical for assessing the validator's contribution to the network's security and efficiency."
   type        = string
   default     = "last_5m"
+
+  validation {
+    condition     = contains(["last_1m", "last_5m", "last_10m", "last_15m", "last_30m", "last_1h", "last_2h", "last_4h", "last_1d"], var.low_certificate_creation_rate_timeframe)
+    error_message = "The 'low_certificate_creation_rate_timeframe' must be one of the following values: 'last_1m', 'last_5m', 'last_10m', 'last_15m', 'last_30m', 'last_1h', 'last_2h', 'last_4h', 'last_1d'."
+  }
 }
 
 variable "low_certificate_creation_rate_threshold_critical" {
@@ -191,12 +265,22 @@ variable "low_checkpoints_execution_rate_aggregator" {
   description = "Determines the aggregation method (e.g., 'max') for calculating the checkpoints execution rate, vital for assessing overall performance trends."
   type        = string
   default     = "max"
+
+  validation {
+    condition     = contains(["min", "max", "avg"], var.low_checkpoints_execution_rate_aggregator)
+    error_message = "The 'low_checkpoints_execution_rate_aggregator' must be one of the following values: 'min', 'max', 'avg'."
+  }
 }
 
 variable "low_checkpoints_execution_rate_timeframe" {
   description = "Defines the evaluation period for the low checkpoints execution rate monitor, setting the context for performance analysis."
   type        = string
   default     = "last_5m"
+
+  validation {
+    condition     = contains(["last_1m", "last_5m", "last_10m", "last_15m", "last_30m", "last_1h", "last_2h", "last_4h", "last_1d"], var.low_checkpoints_execution_rate_timeframe)
+    error_message = "The 'low_checkpoints_execution_rate_timeframe' must be one of the following values: 'last_1m', 'last_5m', 'last_10m', 'last_15m', 'last_30m', 'last_1h', 'last_2h', 'last_4h', 'last_1d'."
+  }
 }
 
 variable "low_checkpoints_execution_rate_shift_timeframe" {
@@ -231,12 +315,22 @@ variable "low_consensus_proposal_rate_aggregator" {
   description = "Specifies the aggregation method (e.g., 'avg') for evaluating consensus proposal rates, critical for understanding participation effectiveness."
   type        = string
   default     = "avg"
+
+  validation {
+    condition     = contains(["min", "max", "avg"], var.low_consensus_proposal_rate_aggregator)
+    error_message = "The 'low_consensus_proposal_rate_aggregator' must be one of the following values: 'min', 'max', 'avg'."
+  }
 }
 
 variable "low_consensus_proposal_rate_timeframe" {
   description = "Sets the timeframe for monitoring low consensus proposal rates, crucial for timely detection of decreased network engagement."
   type        = string
   default     = "last_5m"
+
+  validation {
+    condition     = contains(["last_1m", "last_5m", "last_10m", "last_15m", "last_30m", "last_1h", "last_2h", "last_4h", "last_1d"], var.low_consensus_proposal_rate_timeframe)
+    error_message = "The 'low_consensus_proposal_rate_timeframe' must be one of the following values: 'last_1m', 'last_5m', 'last_10m', 'last_15m', 'last_30m', 'last_1h', 'last_2h', 'last_4h', 'last_1d'."
+  }
 }
 
 variable "low_consensus_proposal_rate_threshold_critical" {
@@ -265,12 +359,22 @@ variable "low_rounds_progression_aggregator" {
   description = "Aggregation method (e.g., 'max') for the low rounds progression monitor, important for evaluating the progression efficiency of rounds."
   type        = string
   default     = "max"
+
+  validation {
+    condition     = contains(["min", "max", "avg"], var.low_rounds_progression_aggregator)
+    error_message = "The 'low_rounds_progression_aggregator' must be one of the following values: 'min', 'max', 'avg'."
+  }
 }
 
 variable "low_rounds_progression_timeframe" {
   description = "Timeframe for assessing low rounds progression, essential for ensuring timely and effective participation in the consensus mechanism."
   type        = string
   default     = "last_5m"
+
+  validation {
+    condition     = contains(["last_1m", "last_5m", "last_10m", "last_15m", "last_30m", "last_1h", "last_2h", "last_4h", "last_1d"], var.low_rounds_progression_timeframe)
+    error_message = "The 'low_rounds_progression_timeframe' must be one of the following values: 'last_1m', 'last_5m', 'last_10m', 'last_15m', 'last_30m', 'last_1h', 'last_2h', 'last_4h', 'last_1d'."
+  }
 }
 
 variable "low_rounds_progression_shift_timeframe" {
