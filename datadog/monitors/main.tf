@@ -4,6 +4,7 @@ locals {
       enabled    = var.high_consensus_latency_enabled
       name       = "High Consensus Latency"
       type       = "metric alert"
+      message    = var.high_consensus_latency_message
       priority   = var.high_consensus_latency_priority
       query      = "${var.high_consensus_latency_aggregator}(${var.high_consensus_latency_timeframe}):avg:sui.validator.sequencing_certificate_latency.sum${local.filter_tags}.as_rate() / avg:sui.validator.sequencing_certificate_latency.count${local.filter_tags}.as_rate() > ${var.high_consensus_latency_threshold_critical}"
       thresholds = {
@@ -16,6 +17,7 @@ locals {
       enabled    = var.high_owned_objects_certificates_execution_latency_enabled
       name       = "High Owned Objects Certificates Execution Latency"
       type       = "query alert"
+      message     = var.high_owned_objects_certificates_execution_latency_message
       priority   = var.high_owned_objects_certificates_execution_latency_priority
       query      = "${var.high_owned_objects_certificates_execution_latency_aggregator}(${var.high_owned_objects_certificates_execution_latency_timeframe}):avg:sui.validator.validator_service_handle_certificate_non_consensus_latency${local.filter_tags} > ${var.high_owned_objects_certificates_execution_latency_threshold_critical}"
       thresholds = {
@@ -28,6 +30,7 @@ locals {
       enabled    = var.high_shared_objects_certificates_execution_latency_enabled
       name       = "High Shared Objects Certificates Execution Latency"
       type       = "query alert"
+      message    = var.high_shared_objects_certificates_execution_latency_message
       priority   = var.high_shared_objects_certificates_execution_latency_priority
       query      = "${var.high_shared_objects_certificates_execution_latency_aggregator}(${var.high_shared_objects_certificates_execution_latency_timeframe}):avg:sui.validator.validator_service_handle_certificate_consensus_latency${local.filter_tags} / 1000 > ${var.high_shared_objects_certificates_execution_latency_threshold_critical}"
       thresholds = {
@@ -40,6 +43,7 @@ locals {
       enabled    = var.low_certificate_creation_rate_enabled
       name       = "Low Certificate Creation Rate"
       type       = "query alert"
+      message    = var.low_certificate_creation_rate_message
       priority   = var.low_certificate_creation_rate_priority
       query      = "${var.low_certificate_creation_rate_aggregator}(${var.low_certificate_creation_rate_timeframe}):sum:sui.validator.certificates_created.count${local.filter_tags}.as_rate() < ${var.low_certificate_creation_rate_threshold_critical}"
       thresholds = {
@@ -52,6 +56,7 @@ locals {
       enabled    = var.low_checkpoints_execution_rate_enabled
       name       = "Low Checkpoints Execution Rate"
       type       = "query alert"
+      message    = var.low_checkpoints_execution_rate_message
       priority   = var.low_checkpoints_execution_rate_priority
       query      = "change(${var.low_checkpoints_execution_rate_aggregator}(${var.low_checkpoints_execution_rate_timeframe}),${var.low_checkpoints_execution_rate_shift_timeframe}):max:sui.validator.last_executed_checkpoint${local.filter_tags} <= ${var.low_checkpoints_execution_rate_threshold_critical}"
       thresholds = {
@@ -64,6 +69,7 @@ locals {
       enabled    = var.low_consensus_proposal_rate_enabled
       name       = "Low Consensus Proposal Rate"
       type       = "query alert"
+      message    = var.low_consensus_proposal_rate_message
       priority   = var.low_consensus_proposal_rate_priority
       query      = "${var.low_consensus_proposal_rate_aggregator}(${var.low_consensus_proposal_rate_timeframe}):avg:sui.validator.proposer_batch_latency.sum${local.filter_tags}.as_rate() / avg:sui.validator.proposer_batch_latency.count${local.filter_tags}.as_rate() > ${var.low_proposal_consensus_rate_threshold_critical}"
       thresholds = {
@@ -76,6 +82,7 @@ locals {
       enabled    = var.low_rounds_progression_enabled
       name       = "Low Rounds Progression"
       type       = "query alert"
+      message    = var.low_rounds_progression_message
       priority   = var.low_rounds_progression_priority
       query      = "change(${var.low_rounds_progression_aggregator}(${var.low_rounds_progression_timeframe}),${var.low_rounds_progression_shift_timeframe}):max:sui.validator.current_round${local.filter_tags} <= ${var.low_rounds_progression_threshold_critical}"
       thresholds = {
@@ -99,7 +106,7 @@ resource "datadog_monitor" "sui_validator_monitor" {
   name    = "[${var.environment}] [${var.name}] [${var.service}] ${each.value.name} {{#is_alert}}{{{comparator}}} {{threshold}}% ({{value}}%){{/is_alert}}{{#is_warning}}{{{comparator}}} {{warn_threshold}}% ({{value}}%){{/is_warning}}"
   type    = each.value.type
   priority = each.value.priority
-  message = templatefile("${path.module}/templates/messages/validator_monitor_message.tftpl", {
+  message = each.value.message != "" ? each.value.message : templatefile("${path.module}/templates/messages/validator_monitor_message.tftpl", {
     critical_targets   = join(" ", distinct(lookup(var.notification_targets, "critical", [""])))
     warning_targets    = join(" ", distinct(lookup(var.notification_targets, "warning", [""])))
     environment        = var.environment
@@ -129,4 +136,3 @@ resource "datadog_monitor" "sui_validator_monitor" {
   new_group_delay          = var.new_group_delay
   tags                     = concat(local.shared_tags, var.tags)
 }
-
