@@ -1,23 +1,51 @@
-{{!-- Warning Section --}}
-{{#is_warning}}
+{{/* Warning Section */}}
+{{if eq .AlertType "warning"}}
 {{override_priority 'P2'}}
-{{/is_warning}}
+🔔 *Warning*
+-------------------------------------------------
+${warning_targets}
 
-{{!-- Warning Recovery Section --}}
-{{#is_warning_recovery}}
-${createMessageSection("✅", "Warning Recovery", warningNotificationTargets)}
-{{/is_warning_recovery}}
+*DETAILS:*
+• 📊 *Metric:* ${metricType}
+• 🌐 *Service:* ${service} '${name}'
+• 🛑 *Threshold:* ${warn_threshold} ${metricUnit}
+• 🔢 *Current Value:* {{eval "round(value, 2)"}} ${metricUnit}
 
-{{!-- Alert Section --}}
-{{#is_alert}}
+_Note_: This may indicate a potential issue. Please review to ensure smooth operation.
+{{end}}
+
+{{/* Warning Recovery Section */}}
+{{if eq .AlertType "warning_recovery"}}
+✅ *Warning Recovery*
+-------------------------------------------------
+${local.message_template_variables.warning_targets}
+_Status:_ This is within acceptable parameters. No further immediate action required.
+{{end}}
+
+{{/* Alert Section */}}
+{{if eq .AlertType "alert"}}
 {{override_priority 'P1'}}
-${createMessageSection("🚨", "Alert", criticalNotificationTargets)}
-{{/is_alert}}
+🚨 *Alert*
+-------------------------------------------------
+${critical_targets}
 
-{{!-- Alert Recovery Section --}}
-{{#is_alert_recovery}}
-${createMessageSection("✅", "Alert Recovery", criticalNotificationTargets)}
-{{/is_alert_recovery}}
+*DETAILS:*
+• 📊 *Metric:* ${metricType}
+• 🌐 *Service:* ${service} '${name}'
+• 🛑 *Threshold:* ${threshold} ${metricUnit}
+• 🔢 *Current Value:* {{eval "round(value, 2)"}} ${metricUnit}
+
+_Action:_ Please investigate the cause of this increase.
+{{end}}
+
+{{/* Alert Recovery Section */}}
+{{if eq .AlertType "alert_recovery"}}
+✅ *Alert Recovery*
+-------------------------------------------------
+${
+    critical_targets}
+_Status:_ This is within acceptable parameters. No further immediate action required.
+{{end}}
 
 -------------------------------------------------
 🕒 *Triggered at (UTC):* {{last_triggered_at}}

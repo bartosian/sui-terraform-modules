@@ -383,6 +383,12 @@ variable "low_rounds_progression_shift_timeframe" {
   default     = "last_5m"
 }
 
+variable "low_rounds_progression_shift_timeframe" {
+  description = "Specifies the comparison timeframe for assessing changes in the rounds progression, aiding in trend analysis and anomaly detection."
+  type        = string
+  default     = "last_5m"
+}
+
 variable "low_rounds_progression_threshold_critical" {
   description = "Defines the critical threshold for rounds progression alerts, indicating no advancement in consensus rounds within the specified timeframe."
   default     = 0

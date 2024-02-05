@@ -10,6 +10,7 @@ locals {
         critical = var.high_consensus_latency_threshold_critical
         warning  = var.high_consensus_latency_threshold_warning
       }
+      metric_unit = "seconds"
     },
     "validator_high_owned_objects_certificates_execution_latency" = {
       enabled    = var.high_owned_objects_certificates_execution_latency_enabled
@@ -21,6 +22,7 @@ locals {
         critical = var.high_owned_objects_certificates_execution_latency_threshold_critical
         warning  = var.high_owned_objects_certificates_execution_latency_threshold_warning
       }
+      metric_unit = "milliseconds"
     },
     "validator_high_shared_objects_certificates_execution_latency_monitor" = {
       enabled    = var.high_shared_objects_certificates_execution_latency_enabled
@@ -32,6 +34,7 @@ locals {
         critical = var.high_shared_objects_certificates_execution_latency_threshold_critical
         warning  = var.high_shared_objects_certificates_execution_latency_threshold_warning
       }
+      metric_unit = "seconds"
     },
     "validator_low_certificate_creation_rate_monitor" = {
       enabled    = var.low_certificate_creation_rate_enabled
@@ -43,6 +46,7 @@ locals {
         critical = var.low_certificate_creation_rate_threshold_critical
         warning  = var.low_certificate_creation_rate_threshold_warning
       }
+      metric_unit = "certificates/second"
     },
     "validator_low_checkpoints_execution_rate_monitor" = {
       enabled    = var.low_checkpoints_execution_rate_enabled
@@ -54,6 +58,7 @@ locals {
         critical = var.low_checkpoints_execution_rate_threshold_critical
         warning  = var.low_checkpoints_execution_rate_threshold_warning
       }
+      metric_unit = "checkpoints/${var.low_checkpoints_execution_rate_timeframe}"
     },
     "validator_low_consensus_proposal_rate_monitor" = {
       enabled    = var.low_consensus_proposal_rate_enabled
@@ -65,17 +70,19 @@ locals {
         critical = var.low_consensus_proposal_rate_threshold_critical
         warning  = var.low_consensus_proposal_rate_threshold_warning
       }
+      metric_unit = "proposals/second"
     },
     "validator_low_rounds_progression_monitor" = {
       enabled    = var.low_rounds_progression_enabled
       name       = "Low Rounds Progression"
       type       = "query alert"
       priority   = var.low_rounds_progression_priority
-      query      = "change(${var.low_rounds_progression_aggregator}(${var.low_rounds_progression_timeframe}),last_5m):max:sui.validator.current_round${local.filter_tags} <= ${var.low_rounds_progression_threshold_critical}"
+      query      = "change(${var.low_rounds_progression_aggregator}(${var.low_rounds_progression_timeframe}),${var.low_rounds_progression_shift_timeframe}):max:sui.validator.current_round${local.filter_tags} <= ${var.low_rounds_progression_threshold_critical}"
       thresholds = {
         critical = var.low_rounds_progression_threshold_critical
         warning  = var.low_rounds_progression_threshold_warning
       }
+      metric_unit = "checkpoints/${var.low_rounds_progression_timeframe}"
     }
   }
   shared_tags = ["service:${var.service}", "env:${var.environment}", "chain_id:${var.chain_id}", "name:${var.name}"]
@@ -89,11 +96,22 @@ locals {
 resource "datadog_monitor" "sui_validator_monitor" {
   for_each = {for key, monitor in local.monitors: key => monitor if monitor.enabled == "true"}
 
-  name               = "[${var.environment}] [${var.name}] [${var.service}] ${each.value.name} {{#is_alert}}{{{comparator}}} {{threshold}}% ({{value}}%){{/is_alert}}{{#is_warning}}{{{comparator}}} {{warn_threshold}}% ({{value}}%){{/is_warning}}"
-  type               = each.value.type
-  priority           = each.value.priority
-  message            = templatefile("${path.module}/templates/messages/validator_monitor_message.tftpl", local.message_template_variables)
-  query              = each.value.query
+  name    = "[${var.environment}] [${var.name}] [${var.service}] ${each.value.name} {{#is_alert}}{{{comparator}}} {{threshold}}% ({{value}}%){{/is_alert}}{{#is_warning}}{{{comparator}}} {{warn_threshold}}% ({{value}}%){{/is_warning}}"
+  type    = each.value.type
+  priority = each.value.priority
+  message = templatefile("${path.module}/templates/messages/validator_monitor_message.tftpl", {
+    critical_targets   = join(" ", distinct(lookup(var.notification_targets, "critical", [""])))
+    warning_targets    = join(" ", distinct(lookup(var.notification_targets, "warning", [""])))
+    environment        = var.environment
+    service            = var.service
+    name               = var.name
+    metricType         = each.key
+    metricUnit         = each.value.metric_unit
+    threshold          = each.value.thresholds.critical
+    warn_threshold     = each.value.thresholds.warning
+  })
+
+  query = each.value.query
 
   monitor_thresholds = {
     critical = each.value.thresholds.critical
@@ -111,3 +129,4 @@ resource "datadog_monitor" "sui_validator_monitor" {
   new_group_delay          = var.new_group_delay
   tags                     = concat(local.shared_tags, var.tags)
 }
+
