@@ -43,6 +43,17 @@ locals {
         critical = var.low_certificate_creation_rate_threshold_critical
         warning  = var.low_certificate_creation_rate_threshold_warning
       }
+    },
+    "validator_low_checkpoints_execution_rate_monitor" = {
+      enabled    = var.low_checkpoints_execution_rate_enabled
+      name       = "Low Checkpoints Execution"
+      type       = "query alert"
+      priority   = var.low_checkpoints_execution_rate_priority
+      query      = "change(${var.low_checkpoints_execution_rate_aggregator}(${var.low_checkpoints_execution_rate_timeframe}),last_5m:max:sui.validator.last_executed_checkpoint${local.filter_tags} <= ${var.low_checkpoints_execution_rate_threshold_critical}"
+      thresholds = {
+        critical = var.low_checkpoints_execution_rate_threshold_critical
+        warning  = var.low_checkpoints_execution_rate_threshold_warning
+      }
     }
   }
 }
