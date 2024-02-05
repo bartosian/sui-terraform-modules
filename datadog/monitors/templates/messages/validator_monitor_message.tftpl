@@ -1,0 +1,23 @@
+{{!-- Warning Section --}}
+{{#is_warning}}
+{{override_priority 'P2'}}
+{{/is_warning}}
+
+{{!-- Warning Recovery Section --}}
+{{#is_warning_recovery}}
+${createMessageSection("✅", "Warning Recovery", warningNotificationTargets)}
+{{/is_warning_recovery}}
+
+{{!-- Alert Section --}}
+{{#is_alert}}
+{{override_priority 'P1'}}
+${createMessageSection("🚨", "Alert", criticalNotificationTargets)}
+{{/is_alert}}
+
+{{!-- Alert Recovery Section --}}
+{{#is_alert_recovery}}
+${createMessageSection("✅", "Alert Recovery", criticalNotificationTargets)}
+{{/is_alert_recovery}}
+
+-------------------------------------------------
+🕒 *Triggered at (UTC):* {{last_triggered_at}}
