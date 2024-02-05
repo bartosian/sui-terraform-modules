@@ -49,10 +49,21 @@ locals {
       name       = "Low Checkpoints Execution"
       type       = "query alert"
       priority   = var.low_checkpoints_execution_rate_priority
-      query      = "change(${var.low_checkpoints_execution_rate_aggregator}(${var.low_checkpoints_execution_rate_timeframe}),last_5m:max:sui.validator.last_executed_checkpoint${local.filter_tags} <= ${var.low_checkpoints_execution_rate_threshold_critical}"
+      query      = "change(${var.low_checkpoints_execution_rate_aggregator}(${var.low_checkpoints_execution_rate_timeframe}),last_5m):max:sui.validator.last_executed_checkpoint${local.filter_tags} <= ${var.low_checkpoints_execution_rate_threshold_critical}"
       thresholds = {
         critical = var.low_checkpoints_execution_rate_threshold_critical
         warning  = var.low_checkpoints_execution_rate_threshold_warning
+      }
+    },
+    "validator_low_consensus_proposal_rate_monitor" = {
+      enabled    = var.low_consensus_proposal_rate_enabled
+      name       = "Low Checkpoints Execution"
+      type       = "query alert"
+      priority   = var.low_consensus_proposal_rate_priority
+      query      = "${var.low_consensus_proposal_rate_aggregator}(${var.low_consensus_proposal_rate_timeframe}):avg:sui.validator.proposer_batch_latency.sum${local.filter_tags}.as_rate() / avg:sui.validator.proposer_batch_latency.count${local.filter_tags}.as_rate() > ${var.low_proposal_consensus_rate_threshold_critical}"
+      thresholds = {
+        critical = var.low_consensus_proposal_rate_threshold_critical
+        warning  = var.low_consensus_proposal_rate_threshold_warning
       }
     }
   }
