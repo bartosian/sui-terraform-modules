@@ -1,5 +1,5 @@
 locals {
-  monitors = {
+  objectives = {
     "validator_consensus_latency" = {
       enabled     = var.consensus_latency_enabled
       name        = "Consensus Latency SLO"
@@ -64,44 +64,31 @@ locals {
   shared_tags = ["service:${var.service}", "env:${var.environment}", "chain_id:${var.chain_id}", "name:${var.name}"]
 }
 
-# Resource: Datadog Monitor for SUI Validator Metrics
-# Description: This Terraform resource dynamically creates and manages Datadog monitors tailored for monitoring 
-# various metrics associated with SUI Validators. It leverages a dynamic approach using the `for_each` construct 
-# to iterate over a predefined set of monitor configurations. Each monitor configuration is conditionally applied 
-# based on its enabled status, allowing for flexible and scalable monitoring solutions.
-resource "datadog_monitor" "sui_validator_monitor" {
-  for_each = {for key, monitor in local.monitors: key => monitor if monitor.enabled == "true"}
+# Resource: Datadog Service Level Objective for SUI Validator Metrics
+# Description: The Datadog service level objective (SLO) resource in Terraform is used to create and manage SLOs tailored 
+# for monitoring various metrics associated with SUI Validators. This resource leverages a dynamic approach using the for_each 
+# construct to iterate over a predefined set of SLO configurations. Each SLO configuration is conditionally applied based on 
+# its enabled status, allowing for flexible and scalable monitoring solutions. This resource is designed to handle SUI Validator 
+# objectives efficiently.
+resource "datadog_monitor" "sui_validator_slo" {
+  for_each = {for key, objective in local.objectives: key => objective if objective.enabled == "true"}
 
-  name    = "[${var.environment}] [${var.name}] [${var.service}] ${each.value.name} {{#is_alert}}{{{comparator}}} {{threshold}}% ({{value}}%){{/is_alert}}{{#is_warning}}{{{comparator}}} {{warn_threshold}}% ({{value}}%){{/is_warning}}"
-  type    = each.value.type
-  priority = each.value.priority
-  message = each.value.message != "" ? each.value.message : templatefile("${path.module}/templates/messages/validator_monitor_message.tftpl", {
-    critical_targets   = join(" ", distinct(lookup(var.notification_targets, "critical", [""])))
-    warning_targets    = join(" ", distinct(lookup(var.notification_targets, "warning", [""])))
-    environment        = var.environment
-    service            = var.service
-    name               = var.name
-    metricType         = each.key
-    metricUnit         = each.value.metric_unit
-    threshold          = each.value.thresholds.critical
-    warn_threshold     = each.value.thresholds.warning
-  })
+  name        = "[${var.environment}] [${var.name}] [${var.service}] ${each.value.name}"
+  type        = each.value.type
+  description = each.value.description
+  monitor_ids = each.value.monitor_ids
 
   query = each.value.query
 
-  monitor_thresholds = {
-    critical = each.value.thresholds.critical
-    warning  = each.value.thresholds.warning
+  thresholds = {
+    timeframe = each.value.thresholds.timeframe
+    target    = each.value.thresholds.target
+    warning   = each.value.thresholds.warning
   }
 
-  renotify_interval        = var.renotify_interval
-  renotify_occurrences     = var.renotify_occurrences
-  renotify_statuses        = var.renotify_statuses
-  notify_no_data           = var.notify_no_data
-  no_data_timeframe        = var.no_data_timeframe
-  notification_preset_name = var.notification_preset_name
-  include_tags             = true
-  evaluation_delay         = var.evaluation_delay
-  new_group_delay          = var.new_group_delay
-  tags                     = concat(local.shared_tags, var.tags)
+  timeframe          = each.value.thresholds.timeframe
+  target_threshold   = each.value.thresholds.target
+  warning_treshold   = each.value.thresholds.warning
+
+  tags = concat(local.shared_tags, var.tags)
 }
