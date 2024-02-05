@@ -46,10 +46,10 @@ locals {
     },
     "validator_low_checkpoints_execution_rate_monitor" = {
       enabled    = var.low_checkpoints_execution_rate_enabled
-      name       = "Low Checkpoints Execution"
+      name       = "Low Checkpoints Execution Rate"
       type       = "query alert"
       priority   = var.low_checkpoints_execution_rate_priority
-      query      = "change(${var.low_checkpoints_execution_rate_aggregator}(${var.low_checkpoints_execution_rate_timeframe}),last_5m):max:sui.validator.last_executed_checkpoint${local.filter_tags} <= ${var.low_checkpoints_execution_rate_threshold_critical}"
+      query      = "change(${var.low_checkpoints_execution_rate_aggregator}(${var.low_checkpoints_execution_rate_timeframe}),${var.low_checkpoints_execution_rate_shift_timeframe}):max:sui.validator.last_executed_checkpoint${local.filter_tags} <= ${var.low_checkpoints_execution_rate_threshold_critical}"
       thresholds = {
         critical = var.low_checkpoints_execution_rate_threshold_critical
         warning  = var.low_checkpoints_execution_rate_threshold_warning
@@ -88,7 +88,7 @@ locals {
 resource "datadog_monitor" "sui_validator_monitor" {
   for_each = {for key, monitor in local.monitors: key => monitor if monitor.enabled == "true"}
 
-  name               = "[${var.environment}] [${var.name}] [${var.validator}] ${each.value.name} {{#is_alert}}{{{comparator}}} {{threshold}}% ({{value}}%){{/is_alert}}{{#is_warning}}{{{comparator}}} {{warn_threshold}}% ({{value}}%){{/is_warning}}"
+  name               = "[${var.environment}] [${var.name}] [${var.service}] ${each.value.name} {{#is_alert}}{{{comparator}}} {{threshold}}% ({{value}}%){{/is_alert}}{{#is_warning}}{{{comparator}}} {{warn_threshold}}% ({{value}}%){{/is_warning}}"
   type               = each.value.type
   priority           = each.value.priority
   message            = templatefile("${path.module}/templates/messages/validator_monitor_message.tftpl", local.message_template_variables)
@@ -108,5 +108,5 @@ resource "datadog_monitor" "sui_validator_monitor" {
   include_tags             = true
   evaluation_delay         = var.evaluation_delay
   new_group_delay          = var.new_group_delay
-  tags                     = concat(local.common_tags, var.tags)
+  tags                     = concat(local.shared_tags, var.tags)
 }
