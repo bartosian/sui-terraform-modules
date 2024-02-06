@@ -1,26 +1,36 @@
 {
-    "name": "Low Certificate Creation Rate",
+    "id": 384933,
+    "name": "[testnet] [validator] [my_validator] Low Certificate Creation Rate {{#is_alert}}{{{comparator}}} {{threshold}}% ({{value}}%){{/is_alert}}{{#is_warning}}{{{comparator}}} {{warn_threshold}}% ({{value}}%){{/is_warning}}",
     "type": "query alert",
-    "query": "avg(last_15m):sum:sui.validator.certificates_created.count{env:testnet, service:validator}.as_rate() < 0.5",
-    "message": "```\n{{!-- Warning Section --}}\n{{#is_warning}}\n{{override_priority 'P2'}}\n🔔\n{{/is_warning}}\n\n{{!-- Warning Recovery Section --}}\n{{#is_warning_recovery}}\n✅\n{{/is_warning_recovery}}\n\n{{!-- Alert Section --}}\n{{#is_alert}}\n{{override_priority 'P1'}}\n🚨\n{{/is_alert}}\n\n{{!-- Alert Recovery Section --}}\n{{#is_alert_recovery}}\n✅\n{{/is_alert_recovery}}\n\n-------------------------------------------------\n🕒 *Triggered at (UTC):* {{last_triggered_at}}\n```",
+    "query": "avg(last_5m):sum:sui.validator.certificates_created.count{service:validator,env:testnet,chain_id:4c78adac,name:my_validator}.as_rate() < 0.5",
+    "message": "{{!-- Warning Section --}}\n{{#is_warning}}\n\n{{override_priority 'P2'}}\n\n-------------------------------------------------\n🔔 *Warning*\n-------------------------------------------------\n\n\n*DETAILS:*\n• 📈 *Metric:* validator_low_certificate_creation_rate\n• 🌐 *Service:* validator 'my_validator'\n• 🚀 *Environment:* testnet\n• 🚧 *Threshold:* 1 certificates/second\n• 📋 *Current Value:* {{eval \"round(value, 2)\"}} certificates/second\n\n_Note_: This may indicate a potential issue. Please review to ensure smooth operation.\n\n{{/is_warning}}\n\n{{!-- Warning Recovery Section --}}\n{{#is_warning_recovery}}\n\n-------------------------------------------------\n✅ *Warning Recovery*\n-------------------------------------------------\n\n\n*DETAILS:*\n• 📈 *Metric:* validator_low_certificate_creation_rate\n• 🌐 *Service:* validator 'my_validator'\n• 🚀 *Environment:* testnet\n• 🚧 *Threshold:* 1 certificates/second\n• 📋 *Current Value:* {{eval \"round(value, 2)\"}} certificates/second\n\n_Status:_ This is within acceptable parameters. No further immediate action required.\n{{/is_warning_recovery}}\n\n{{!-- Alert Section --}}\n{{#is_alert}}\n\n{{override_priority 'P1'}}\n\n-------------------------------------------------\n🚨 *Alert*\n-------------------------------------------------\n\n\n*DETAILS:*\n• 📈 *Metric:* validator_low_certificate_creation_rate\n• 🌐 *Service:* validator 'my_validator'\n• 🚀 *Environment:* testnet\n• 🚧 *Threshold:* 0.5 certificates/second\n• 📋 *Current Value:* {{eval \"round(value, 2)\"}} certificates/second\n\n_Action:_ Please investigate the cause of this increase.\n\n{{/is_alert}}\n\n{{!-- Alert Recovery Section --}}\n{{#is_alert_recovery}}\n\n-------------------------------------------------\n✅ *Alert Recovery*\n-------------------------------------------------\n\n\n*DETAILS:*\n• 📈 *Metric:* validator_low_certificate_creation_rate\n• 🌐 *Service:* validator 'my_validator'\n• 🚀 *Environment:* testnet\n• 🚧 *Threshold:* 0.5 certificates/second\n• 📋 *Current Value:* {{eval \"round(value, 2)\"}} certificates/second\n\n_Status:_ This is within acceptable parameters. No further immediate action required.\n{{/is_alert_recovery}}\n\n-------------------------------------------------\n🕒 *Triggered at (UTC):* {{last_triggered_at}}",
     "tags": [
-        "env:testnet",
-        "service:validator",
         "chain_id:4c78adac",
-        "name:bartestnet"
+        "env:testnet",
+        "name:my_validator",
+        "service:validator"
     ],
     "options": {
+        "escalation_message": "{{!-- Escalation Message --}}\n{{#is_renotify}}\n\n{{override_priority 'P1'}}\n\n-------------------------------------------------\n🚨 *Alert Escalation*\n-------------------------------------------------\n\n\n*DETAILS:*\n• 📈 *Metric:* validator_low_certificate_creation_rate\n• 🌐 *Service:* validator 'my_validator'\n• 🚀 *Environment:* testnet\n• 🚧 *Threshold:* 0.5 certificates/second\n• 📋 *Current Value:* {{eval \"round(value, 2)\"}} certificates/second\n\n_Status:_ This alert has escalated as the issue persists. Further investigation and immediate action may be required.\n\n{{/is_renotify}}\n\n-------------------------------------------------\n🕒 *Triggered at (UTC):* {{last_triggered_at}}",
+        "evaluation_delay": 300,
+        "include_tags": true,
+        "new_host_delay": 300,
+        "no_data_timeframe": 15,
+        "notification_preset_name": "hide_handles",
+        "notify_no_data": true,
+        "renotify_interval": 15,
+        "renotify_occurrences": 2,
+        "renotify_statuses": [
+            "alert",
+            "no data",
+            "warn"
+        ],
+        "require_full_window": true,
         "thresholds": {
             "critical": 0.5,
             "warning": 1
         },
         "notify_audit": false,
-        "include_tags": false,
-        "notify_no_data": true,
-        "no_data_timeframe": 30,
-        "evaluation_delay": 300,
-        "notification_preset_name": "hide_handles",
-        "new_host_delay": 300,
         "silenced": {}
     },
     "priority": 1,
