@@ -1,6 +1,6 @@
 {
     "title": "💧 SUI VALIDATOR",
-    "description": "[[suggested_dashboards]]",
+    "description": "The SUI Validator Performance Metrics Dashboard provides a comprehensive view of the performance and reliability of the SUI validator network. It offers real-time insights into critical metrics, monitors Service Level Objectives (SLOs), and delivers timely alerts to ensure the seamless operation of the validator ecosystem.",
     "widgets": [{
             "id": 2091050482867076,
             "definition": {

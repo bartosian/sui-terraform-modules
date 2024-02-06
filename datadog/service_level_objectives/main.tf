@@ -11,7 +11,7 @@ locals {
         target    = var.consensus_latency_target
         warning   = var.consensus_latency_warning
       }
-    },
+    }
     "validator_owned_objects_certificates_execution_latency" = {
       enabled     = var.owned_objects_certificates_execution_latency_enabled
       name        = "Owned Objects Certificates Execution Latency SLO"
@@ -36,7 +36,7 @@ locals {
         warning   = var.shared_objects_certificates_execution_latency_warning
       }
     },
-    "validator_certificate_creation_rate_monitor" = {
+    "validator_certificate_creation_rate" = {
       enabled    = var.certificate_creation_rate_enabled
       name       = "Certificate Creation Rate SLO"
       type        = "monitor"
@@ -70,7 +70,7 @@ locals {
 # construct to iterate over a predefined set of SLO configurations. Each SLO configuration is conditionally applied based on 
 # its enabled status, allowing for flexible and scalable monitoring solutions. This resource is designed to handle SUI Validator 
 # objectives efficiently.
-resource "datadog_monitor" "sui_validator_slo" {
+resource "datadog_service_level_objective" "sui_validator_slo" {
   for_each = {for key, objective in local.objectives: key => objective if objective.enabled == "true"}
 
   name        = "[${var.environment}] [${var.name}] [${var.service}] ${each.value.name}"

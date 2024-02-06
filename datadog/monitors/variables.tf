@@ -1,10 +1,28 @@
-variable "evaluation_delay" {
-  description = "The delay, in seconds, before evaluating the metric to account for data ingestion latency. Helps ensure data completeness for accurate monitoring."
-  default     = 300
+variable "name" {
+  type        = string
+  description = "Name of the entity monitored within the SUI Network. This name is used to uniquely identify the monitor's target within Datadog."
 }
 
-variable "new_group_delay" {
-  description = "The waiting period, in seconds, before Datadog starts monitoring a new resource. Prevents false alarms during the initial data collection phase."
+variable "environment" {
+  type        = string
+  description = "Deployment environment of the SUI Network being monitored. Common values include 'mainnet', 'testnet', or custom environment names. Default is set to 'testnet'."
+  default     = "testnet"
+}
+
+variable "service" {
+  type        = string
+  description = "Type of service within the SUI Network that is being monitored. For instance, 'validator' represents a node that participates in consensus. Default is set to 'validator'."
+  default     = "validator"
+}
+
+variable "chain_id" {
+  type        = string
+  description = "Unique identifier for the blockchain within the SUI Network. This ID is used to distinguish between different chains or networks. Default is set to a specific chain identifier."
+  default     = "4c78adac"
+}
+
+variable "evaluation_delay" {
+  description = "The delay, in seconds, before evaluating the metric to account for data ingestion latency. Helps ensure data completeness for accurate monitoring."
   default     = 300
 }
 
@@ -25,12 +43,12 @@ variable "notification_preset_name" {
 
 variable "renotify_interval" {
   description = "Interval, in minutes, between re-notifications for unresolved issues, ensuring timely follow-ups on critical Sui validator performance metrics."
-  default     = 10
+  default     = 15
 }
 
 variable "renotify_occurrences" {
   description = "Specifies the maximum number of re-notification messages for unresolved alerts, controlling alert frequency on ongoing issues."
-  default     = 3
+  default     = 2
 }
 
 variable "renotify_statuses" {
@@ -71,6 +89,7 @@ variable "notification_targets" {
 variable "tags" {
   type        = list(string)
   description = "A list of tags to be associated with the Datadog monitors. Tags are key-value pairs that help in categorizing and filtering monitors across different environments, teams, or service types, enhancing manageability and visibility."
+  default     = []
 }
 
 variable "high_consensus_latency_enabled" {
@@ -81,6 +100,12 @@ variable "high_consensus_latency_enabled" {
 
 variable "high_consensus_latency_message" {
   description = "Customizable notification message for the High Consensus Latency monitor, allowing for tailored alerts specific to Sui validator operations."
+  type        = string
+  default     = ""
+}
+
+variable "high_consensus_latency_escalation_message" {
+  description = "A message to include with a re-notification for the High Consensus Latency monitor escalation."
   type        = string
   default     = ""
 }
@@ -129,6 +154,12 @@ variable "high_owned_objects_certificates_execution_latency_message" {
   default     = ""
 }
 
+variable "high_owned_objects_certificates_execution_latency_escalation_message" {
+  description = "A custom message to include with a re-notification for the High Owned Objects Certificates Execution Latency monitor escalation."
+  type        = string
+  default     = ""
+}
+
 variable "high_owned_objects_certificates_execution_latency_aggregator" {
   description = "Determines how execution latency data is aggregated (e.g., 'avg'), essential for accurate performance assessment over time."
   type        = string
@@ -169,6 +200,12 @@ variable "high_shared_objects_certificates_execution_latency_enabled" {
 
 variable "high_shared_objects_certificates_execution_latency_message" {
   description = "Alert message customization for high execution latency of shared objects' certificates, facilitating targeted response actions."
+  type        = string
+  default     = ""
+}
+
+variable "high_shared_objects_certificates_execution_latency_escalation_message" {
+  description = "A custom message to include with a re-notification for the High Shared Objects Certificates Execution Latency monitor escalation."
   type        = string
   default     = ""
 }
@@ -217,6 +254,12 @@ variable "low_certificate_creation_rate_message" {
   default     = ""
 }
 
+variable "low_certificate_creation_rate_escalation_message" {
+  description = "A custom message to include with a re-notification for the Low Certificate Creation Rate monitor escalation."
+  type        = string
+  default     = ""
+}
+
 variable "low_certificate_creation_rate_aggregator" {
   description = "Aggregator function (e.g., 'avg') for calculating the certificate creation rate, important for accurate monitoring of validator activity."
   type        = string
@@ -240,12 +283,12 @@ variable "low_certificate_creation_rate_timeframe" {
 }
 
 variable "low_certificate_creation_rate_threshold_critical" {
-  default     = 1
+  default     = 0.5
   description = "Critical threshold for certificate creation rate, in certificates per second, below which the validator's activity is considered alarmingly low."
 }
 
 variable "low_certificate_creation_rate_threshold_warning" {
-  default     = 0.5
+  default     = 1
   description = "Warning threshold for certificate creation rate, indicating early signs of reduced validator engagement or network issues."
 }
 
@@ -257,6 +300,12 @@ variable "low_checkpoints_execution_rate_enabled" {
 
 variable "low_checkpoints_execution_rate_message" {
   description = "Customizable alert message for low checkpoints execution rate, allowing for specific instructions or insights to be communicated during alerts."
+  type        = string
+  default     = ""
+}
+
+variable "low_checkpoints_execution_rate_escalation_message" {
+  description = "A custom message to include with a re-notification for the Low Checkpoints Execution Rate monitor escalation."
   type        = string
   default     = ""
 }
@@ -291,12 +340,12 @@ variable "low_checkpoints_execution_rate_shift_timeframe" {
 
 variable "low_checkpoints_execution_rate_threshold_critical" {
   description = "Sets the critical alert threshold for checkpoints execution rate, below which the performance is considered significantly impaired."
-  default     = 1
+  default     = 0.5
 }
 
 variable "low_checkpoints_execution_rate_threshold_warning" {
   description = "Establishes the warning threshold for checkpoints execution rate, indicating the onset of potential performance issues."
-  default     = 0.5
+  default     = 1
 }
 
 variable "low_consensus_proposal_rate_enabled" {
@@ -307,6 +356,12 @@ variable "low_consensus_proposal_rate_enabled" {
 
 variable "low_consensus_proposal_rate_message" {
   description = "Allows for a tailored alert message regarding low consensus proposal rates, facilitating targeted actions for maintaining network integrity."
+  type        = string
+  default     = ""
+}
+
+variable "low_consensus_proposal_rate_escalation_message" {
+  description = "A custom message to include with a re-notification for the Low Consensus Proposal Rate monitor escalation."
   type        = string
   default     = ""
 }
@@ -355,6 +410,12 @@ variable "low_rounds_progression_message" {
   default     = ""
 }
 
+variable "low_rounds_progression_escalation_message" {
+  description = "A custom message to include with a re-notification for the Low Rounds Progression monitor escalation."
+  type        = string
+  default     = ""
+}
+
 variable "low_rounds_progression_aggregator" {
   description = "Aggregation method (e.g., 'max') for the low rounds progression monitor, important for evaluating the progression efficiency of rounds."
   type        = string
@@ -375,12 +436,6 @@ variable "low_rounds_progression_timeframe" {
     condition     = contains(["last_1m", "last_5m", "last_10m", "last_15m", "last_30m", "last_1h", "last_2h", "last_4h", "last_1d"], var.low_rounds_progression_timeframe)
     error_message = "The 'low_rounds_progression_timeframe' must be one of the following values: 'last_1m', 'last_5m', 'last_10m', 'last_15m', 'last_30m', 'last_1h', 'last_2h', 'last_4h', 'last_1d'."
   }
-}
-
-variable "low_rounds_progression_shift_timeframe" {
-  description = "Comparison period for analyzing changes in rounds progression, helping in identifying trends or deviations from expected performance."
-  type        = string
-  default     = "last_5m"
 }
 
 variable "low_rounds_progression_shift_timeframe" {
