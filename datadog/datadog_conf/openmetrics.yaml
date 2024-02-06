@@ -1,0 +1,114 @@
+init_config:
+instances:
+  - openmetrics_endpoint: "<VALIDATOR_METRICS_ENDPOINT>"
+    namespace: "sui.validator"
+    metrics:
+      # Current epoch id synced for the validator (gauge)
+      - "current_epoch"
+      # Total duration of the epoch (gauge)  
+      - "epoch_total_duration"  
+      # Current round the validator will propose (gauge)
+      - "current_round"
+      # Highest round received by the primary (gauge)
+      - "highest_received_round"
+      # The most recent round that has been committed from consensus (gauge)
+      - "last_committed_round"
+      # Highest round processed (stored) by the primary (gauge)
+      - "highest_processed_round"
+      # Current voting right of the validator (gauge)
+      - "current_voting_right"
+      # Number of certificates that validator created (counter)
+      - "certificates_created"
+      # Number of certificates that node processed (others + own) (counter)
+      - "certificates_processed"
+      # Number of calls to handle_certificate (counter)
+      - "total_handle_certificate_attempts"
+      # Highest known checkpoint (gauge)
+      - "highest_known_checkpoint"
+      # Last executed checkpoint by the validator (gauge)
+      - "last_executed_checkpoint"
+      # Age of the last executed checkpoint (counter)  
+      - "last_executed_checkpoint_age_ms_sum"
+      # last_executed_checkpoint_age_ms_count (counter)
+      - "last_executed_checkpoint_age_ms_count"   
+      # Age of the last executed checkpoint by the validator (gauge)
+      - "last_executed_checkpoint_age_ms"
+      # Last executed checkpoint timestamp ms (gauge)
+      - "last_executed_checkpoint_timestamp_ms"
+      # Highest synced checkpoint (gauge)
+      - "highest_synced_checkpoint"
+      # Highest verified checkpoint (gauge)
+      - "highest_verified_checkpoint"
+      # Last certified checkpoint (gauge)
+      - "last_certified_checkpoint"
+      # Last pruned effects checkpoint (gauge)
+      - "last_pruned_effects_checkpoint"
+        # Number of epochs to retain for checkpoints (gauge)
+      - "num_epochs_to_retain_for_checkpoints"
+      # Number of epochs to retain for objects (gauge)
+      - "num_epochs_to_retain_for_objects"
+      # Counter of the number of successfully sequenced certificates (counter)
+      - "sequencing_certificate_success"
+      # The inflight requests to sequence certificates (gauge)
+      - "sequencing_certificate_inflight"
+      # Counter of the number of certificates the validator attempts to sequence (counter)
+      - "sequencing_certificate_attempt"
+      # Current number of certificates enqueued to TransactionManager (counter)
+      - "transaction_manager_num_enqueued_certificates"
+      # Transactions included in a checkpoint (counter)
+      - "transactions_included_in_checkpoint"
+      # Total number of transaction certificates handled (counter)
+      - "total_transaction_certificates"
+      # The number of connected sui peers (gauge)
+      - "sui_network_peers"
+      # The number of connected worker peers (gauge)
+      - "worker_network_peers"
+      # The number of connected primary peers (gauge)
+      - "primary_network_peers"
+      # The connection status of a peer. 0 if not connected, 1 if connected (gauge) 
+      - "primary_network_peer_connected"  
+      # The number of requests made on the network (counter)
+      - "sui_inbound_requests"
+      # The number of requests made on the network (counter)
+      - "sui_outbound_requests"
+      # Number of errors by route (counter)
+      - "sui_outbound_request_errors"
+      # Latency of handling a consensus transaction certificate (gauge)
+      - "validator_service_handle_certificate_consensus_latency"
+      # Latency of handling a consensus transaction certificate (counter)  
+      - "validator_service_handle_certificate_consensus_latency_sum"  
+      # Latency of handling a consensus transaction certificate (counter)
+      - "validator_service_handle_certificate_consensus_latency_count"
+      # Latency of handling a non-consensus transaction certificate (gauge)  
+      - "validator_service_handle_certificate_non_consensus_latency"  
+      # Latency of handling a non-consensus transaction certificate (counter)
+      - "validator_service_handle_certificate_non_consensus_latency_sum"
+      # Latency of handling a non-consensus transaction certificate (counter)
+      - "validator_service_handle_certificate_non_consensus_latency_count"
+      # The latency for sequencing a certificate (histogram)
+      - "sequencing_certificate_latency"
+      # Uptime of the validator in seconds (counter)
+      - "uptime"
+      # Total number of consensus transactions skipped (counter)
+      - "skipped_consensus_txns"
+      # Number of transaction signature errors (counter)
+      - "total_signature_errors"
+      # Total number of transaction effects produced (counter)
+      - "total_transaction_effects"
+      # Total number of transaction orders (counter)
+      - "total_transaction_orders"
+      # Number of transactions involving shared objects (counter)
+      - "num_shared_obj_tx"
+      # The number of parallel worker batches currently processed by the worker (gauge)
+      - "parallel_worker_batches"
+      # The number of pruned objects per TX (counter)
+      - "num_input_objects_count"
+      # Flag showing if the network is running in safe mode (gauge)  
+      - "is_safe_mode"
+      # The latency of a batch between the time it has been created and until it has been included to a header proposal (histogram)
+      - "proposer_batch_latency" 
+    tags:
+      - "name:<VALIDATOR_NAME>"       
+      - "env:<VALIDATOR_NETWORK>"  
+      - "service:validator"
+      - "chain_id:<VALIDATOR_CHAIN_ID>"
