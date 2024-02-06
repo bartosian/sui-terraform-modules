@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This module allows for the easy generation of Datadog Dashboards to monitor and visualize the performance and statistics of SUI Validators. The purpose of this module creates the following Datadog Dashboards:
+This module is designed for the easy creation of Datadog Monitors to monitor and visualize the performance and statistics of SUI Validators. It is tailored to generate the following Datadog Monitors:
 
 - SUI Validator High Consensus Latency
 - SUI Validator High Owned Objects Certificates Execution Latency
