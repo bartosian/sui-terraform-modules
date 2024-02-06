@@ -71,3 +71,57 @@ Explore the specialized modules available within this directory:
 Feel free to navigate to the subdirectory that aligns with your specific monitoring needs. Each subdirectory's README provides detailed information on how to use the corresponding Terraform modules, along with configuration options and best practices.
 
 Choose the module that suits your requirements and leverage the power of Datadog for monitoring and ensuring the performance and reliability of the SUI network.
+
+## Usage example
+
+```hcl
+module "datadog_sui_dashboards" {
+  source = "./datadog/dashboards"
+}
+
+module "datadog_sui_monitors" {
+  source = "./datadog/monitors"
+
+  name = "my_validator"
+  service = "validator"
+  chain_id = "4c78adac"
+  environment = "testnet"
+}
+
+module "datadog-sui-service_level_objectives" {
+  source = "../datadog/service_level_objectives"
+
+  name = "my_validator"
+  service = "validator"
+  chain_id = "4c78adac"
+  environment = "testnet"
+
+  consensus_latency_monitor_ids = [
+    module.datadog_monitors.validator_monitor_ids["validator_high_consensus_latency"]
+  ]
+
+  owned_objects_certificates_execution_latency_monitor_ids = [
+    module.datadog_monitors.validator_monitor_ids["validator_high_owned_objects_certificates_execution_latency"]
+  ]
+
+  shared_objects_certificates_execution_latency_monitor_ids = [
+    module.datadog_monitors.validator_monitor_ids["validator_high_shared_objects_certificates_execution_latency"]
+  ]
+
+  certificate_creation_rate_monitor_ids = [
+    module.datadog_monitors.validator_monitor_ids["validator_low_certificate_creation_rate"]
+  ]
+
+  consensus_reliability_monitor_ids = [
+    module.datadog_monitors.validator_monitor_ids["validator_low_consensus_proposal_rate"]
+  ]
+}
+```
+
+This code snippet demonstrates how to use Terraform modules to deploy Datadog monitoring for the SUI Validator. It includes the following modules:
+
+- `datadog_sui_dashboards`: Deploys Datadog dashboards.
+- `datadog_sui_monitors`: Sets up Datadog monitors specific to the SUI Validator.
+- `datadog-sui-service_level_objectives`: Configures Service Level Objectives (SLOs) for the SUI Validator based on various metrics.
+
+The configuration includes specifying the name, service, chain ID, and environment for the SUI Validator, as well as associating monitors with specific metrics for monitoring and alerting. This example provides a comprehensive setup for monitoring SUI Validator performance.
