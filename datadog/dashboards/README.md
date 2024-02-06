@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TThis module allows for the easy generation of Datadog Dashboards to monitor and visualize the performance and statistics of SUI Validators. The purpose of this module creates the following Datadog Dashboards:
+This module allows for the easy generation of Datadog Dashboards to monitor and visualize the performance and statistics of SUI Validators. The purpose of this module creates the following Datadog Dashboards:
 
 - SUI Validator Performance ans Stats
 
@@ -10,7 +10,7 @@ TThis module allows for the easy generation of Datadog Dashboards to monitor and
 
 ```hcl
 module "datadog-dashboards-sui" {
-  source = "sui-terraform-modules/datadog/dashboards"
+  source = "./sui-terraform-modules/datadog/dashboards"
 }
 ```
 
@@ -34,5 +34,5 @@ module "datadog-dashboards-sui" {
 |------|-------------|
 | <a name="output_dashboard_url"></a> [errors\_id](#output\_dashboard\_url) | the URL of the dashboard |
 <!-- END_TF_DOCS -->
-## Related documentation
+## Resource Documentation
 * [Datadog Dashboards Documentation](https://docs.datadoghq.com/dashboards/)

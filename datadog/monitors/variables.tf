@@ -1,6 +1,7 @@
 variable "name" {
   type        = string
   description = "Name of the entity monitored within the SUI Network. This name is used to uniquely identify the monitor's target within Datadog."
+  default     = ""
 }
 
 variable "environment" {
