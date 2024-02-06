@@ -73,14 +73,12 @@ locals {
 resource "datadog_service_level_objective" "sui_validator_slo" {
   for_each = {for key, objective in local.objectives: key => objective if objective.enabled == "true"}
 
-  name        = "[${var.environment}] [${var.name}] [${var.service}] ${each.value.name}"
+  name        = "[${var.environment}] [${var.service}] [${var.name}] ${each.value.name}"
   type        = each.value.type
   description = each.value.description
   monitor_ids = each.value.monitor_ids
 
-  query = each.value.query
-
-  thresholds = {
+  thresholds {
     timeframe = each.value.thresholds.timeframe
     target    = each.value.thresholds.target
     warning   = each.value.thresholds.warning
@@ -88,7 +86,7 @@ resource "datadog_service_level_objective" "sui_validator_slo" {
 
   timeframe          = each.value.thresholds.timeframe
   target_threshold   = each.value.thresholds.target
-  warning_treshold   = each.value.thresholds.warning
+  warning_threshold   = each.value.thresholds.warning
 
   tags = concat(local.shared_tags, var.tags)
 }

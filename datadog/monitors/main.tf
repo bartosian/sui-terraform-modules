@@ -29,7 +29,7 @@ locals {
       }
       metric_unit        = "milliseconds"
     },
-    "validator_high_shared_objects_certificates_execution_latency_monitor" = {
+    "validator_high_shared_objects_certificates_execution_latency" = {
       enabled            = var.high_shared_objects_certificates_execution_latency_enabled
       name               = "High Shared Objects Certificates Execution Latency"
       type               = "query alert"
@@ -43,7 +43,7 @@ locals {
       }
       metric_unit        = "seconds"
     },
-    "validator_low_certificate_creation_rate_monitor" = {
+    "validator_low_certificate_creation_rate" = {
       enabled            = var.low_certificate_creation_rate_enabled
       name               = "Low Certificate Creation Rate"
       type               = "query alert"
@@ -57,7 +57,7 @@ locals {
       }
       metric_unit        = "certificates/second"
     },
-    "validator_low_checkpoints_execution_rate_monitor" = {
+    "validator_low_checkpoints_execution_rate" = {
       enabled            = var.low_checkpoints_execution_rate_enabled
       name               = "Low Checkpoints Execution Rate"
       type               = "query alert"
@@ -71,7 +71,7 @@ locals {
       }
       metric_unit        = "checkpoints/${var.low_checkpoints_execution_rate_timeframe}"
     },
-    "validator_low_consensus_proposal_rate_monitor" = {
+    "validator_low_consensus_proposal_rate" = {
       enabled            = var.low_consensus_proposal_rate_enabled
       name               = "Low Consensus Proposal Rate"
       type               = "query alert"
@@ -85,7 +85,7 @@ locals {
       }
       metric_unit        = "proposals/second"
     },
-    "validator_low_rounds_progression_monitor" = {
+    "validator_low_rounds_progression" = {
       enabled            = var.low_rounds_progression_enabled
       name               = "Low Rounds Progression"
       type               = "query alert"

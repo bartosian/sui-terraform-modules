@@ -90,6 +90,14 @@ variable "tags" {
   type        = list(string)
   description = "A list of tags to be associated with the Datadog monitors. Tags are key-value pairs that help in categorizing and filtering monitors across different environments, teams, or service types, enhancing manageability and visibility."
   default     = []
+
+  validation {
+    condition = can(var.tags) && alltrue([
+      for tag in var.tags :
+      regex("^[^:]+:[^:]+( [^:]+:[^:]+)*$", tag)
+    ])
+    error_message = "(Optional) attribute 'tags' of 'monitor' must be of the type list with string attributes, matching the format 'key:value' (e.g., 'environment:production')."
+  }
 }
 
 variable "high_consensus_latency_enabled" {
