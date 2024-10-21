@@ -2,6 +2,8 @@
 
 Welcome to the Terraform Modules for SUI Network, your all-in-one solution for deploying, monitoring, and managing SUI infrastructure with ease.
 
+![Validator Performance Dashboard](static/images/dashboard.png)
+
 ## Key Features
 - **Infrastructure Deployment:** Easily deploy and manage your SUI network infrastructure using modular and scalable Terraform modules.
 - **Comprehensive Monitoring:** Gain full visibility into your network's performance with built-in Datadog monitors, alerts, and Service Level Objectives (SLOs) created based on requirements provided by SUI Foundation and Mysten Labs.
