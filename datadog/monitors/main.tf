@@ -43,20 +43,6 @@ locals {
       }
       metric_unit        = "seconds"
     },
-    "validator_low_certificate_creation_rate" = {
-      enabled            = var.low_certificate_creation_rate_enabled
-      name               = "Low Certificate Creation Rate"
-      type               = "query alert"
-      message            = var.low_certificate_creation_rate_message
-      escalation_message = var.low_certificate_creation_rate_escalation_message
-      priority           = 1
-      query              = "${var.low_certificate_creation_rate_aggregator}(${var.low_certificate_creation_rate_timeframe}):sum:sui.validator.certificates_created.count${local.filter_tags}.as_rate() < ${var.low_certificate_creation_rate_threshold_critical}"
-      thresholds         = {
-        critical = var.low_certificate_creation_rate_threshold_critical
-        warning  = var.low_certificate_creation_rate_threshold_warning
-      }
-      metric_unit        = "certificates/second"
-    },
     "validator_low_checkpoints_execution_rate" = {
       enabled            = var.low_checkpoints_execution_rate_enabled
       name               = "Low Checkpoints Execution Rate"

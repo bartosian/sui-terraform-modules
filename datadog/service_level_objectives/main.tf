@@ -36,18 +36,6 @@ locals {
         warning   = var.shared_objects_certificates_execution_latency_warning
       }
     },
-    "validator_certificate_creation_rate" = {
-      enabled    = var.certificate_creation_rate_enabled
-      name       = "Certificate Creation Rate SLO"
-      type        = "monitor"
-      description = "The Certificate Creation Rate SLO is defined by the **certificates_created** counter, which increments each time a validator certifies a Narwhal proposal. The consistent rate of certified Narwhal proposals is vital to ensure the dependable operation of the system. In a robust and healthy system, validators should generate a minimum of one certified Narwhal proposal per second, guaranteeing the smooth and reliable functioning of the system's consensus mechanism. This SLO serves as a critical performance metric to maintain the system's stability and efficiency."
-      monitor_ids = var.certificate_creation_rate_monitor_ids
-      thresholds = {
-        timeframe = var.certificate_creation_rate_timeframe
-        target    = var.certificate_creation_rate_target
-        warning   = var.certificate_creation_rate_warning
-      }
-    },
     "validator_consensus_reliability" = {
       enabled     = var.consensus_reliability_enabled
       name        = "Consensus Reliability SLO"

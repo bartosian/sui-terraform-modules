@@ -125,3 +125,6 @@ This code snippet demonstrates how to use Terraform modules to deploy Datadog mo
 - `datadog-sui-service_level_objectives`: Configures Service Level Objectives (SLOs) for the SUI Validator based on various metrics.
 
 The configuration includes specifying the name, service, chain ID, and environment for the SUI Validator, as well as associating monitors with specific metrics for monitoring and alerting. This example provides a comprehensive setup for monitoring SUI Validator performance.
+
+
+git filter-branch --tree-filter 'rm -rf test/' --prune-empty HEAD

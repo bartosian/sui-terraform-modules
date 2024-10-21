@@ -45,6 +45,8 @@
                         "display_format": "countsAndList",
                         "color_preference": "background",
                         "hide_zero_counts": false,
+                        "show_status": true,
+                        "last_triggered_format": "relative",
                         "query": "metric:sui* $service $name $env $chain_id",
                         "sort": "status,asc",
                         "count": 50,
@@ -67,49 +69,92 @@
                 "type": "group",
                 "layout_type": "ordered",
                 "widgets": [{
-                        "id": 1106356948395324,
+                        "id": 2714710306815430,
                         "definition": {
-                            "type": "note",
-                            "content": "Validator",
-                            "background_color": "blue",
-                            "font_size": "24",
-                            "text_align": "center",
-                            "vertical_align": "center",
-                            "show_tick": true,
-                            "tick_pos": "50%",
-                            "tick_edge": "bottom"
+                            "title": "Sync Status",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": true,
+                            "legend_layout": "auto",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{
+                                    "style": { "palette": "green", "palette_index": 4 },
+                                    "formula": "query1 / query2 * 100",
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "canonical_unit",
+                                            "unit_name": "percent"
+                                        }
+                                    }
+                                }],
+                                "queries": [{
+                                        "data_source": "metrics",
+                                        "name": "query1",
+                                        "query": "max:sui.validator.last_executed_checkpoint{$env,$name,$service,$chain_id}"
+                                    },
+                                    {
+                                        "data_source": "metrics",
+                                        "name": "query2",
+                                        "query": "max:sui.validator.highest_synced_checkpoint{$env,$name,$service,$chain_id}"
+                                    }
+                                ],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "dog_classic",
+                                    "order_by": "values",
+                                    "line_type": "solid",
+                                    "line_width": "normal"
+                                },
+                                "display_type": "bars"
+                            }],
+                            "markers": [{
+                                    "label": " > 98% ",
+                                    "value": "y > 98",
+                                    "display_type": "ok dashed"
+                                },
+                                {
+                                    "label": " < 98% ",
+                                    "value": "y < 98",
+                                    "display_type": "warning dashed"
+                                }
+                            ]
                         },
-                        "layout": { "x": 0, "y": 0, "width": 4, "height": 1 }
+                        "layout": { "x": 0, "y": 0, "width": 12, "height": 2 }
                     },
                     {
-                        "id": 1994548985799508,
+                        "id": 6538161987125706,
                         "definition": {
-                            "type": "note",
-                            "content": "Throughput",
-                            "background_color": "orange",
-                            "font_size": "24",
-                            "text_align": "center",
-                            "vertical_align": "center",
-                            "show_tick": true,
-                            "tick_pos": "50%",
-                            "tick_edge": "bottom"
+                            "title": "Epoch",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "response_format": "scalar",
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:sui.validator.current_epoch{$env,$name,$service,$chain_id}",
+                                    "aggregator": "last"
+                                }],
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
+                                "formulas": [{ "formula": "query1" }]
+                            }],
+                            "autoscale": true,
+                            "precision": 0,
+                            "timeseries_background": {
+                                "type": "area",
+                                "yaxis": { "include_zero": false }
+                            }
                         },
-                        "layout": { "x": 4, "y": 0, "width": 4, "height": 1 }
-                    },
-                    {
-                        "id": 8643357842508610,
-                        "definition": {
-                            "type": "note",
-                            "content": "Sync Status",
-                            "background_color": "green",
-                            "font_size": "24",
-                            "text_align": "center",
-                            "vertical_align": "center",
-                            "show_tick": true,
-                            "tick_pos": "50%",
-                            "tick_edge": "bottom"
-                        },
-                        "layout": { "x": 8, "y": 0, "width": 4, "height": 1 }
+                        "layout": { "x": 0, "y": 2, "width": 4, "height": 2 }
                     },
                     {
                         "id": 5292372254685524,
@@ -127,10 +172,12 @@
                                     "aggregator": "sum"
                                 }],
                                 "conditional_formats": [{
-                                    "comparator": ">",
-                                    "value": 0,
-                                    "palette": "white_on_green"
-                                }],
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
                                 "formulas": [{
                                     "number_format": {
                                         "unit": { "label": "days", "type": "custom_unit_label" }
@@ -145,43 +192,36 @@
                                 "type": "area"
                             }
                         },
-                        "layout": { "x": 0, "y": 1, "width": 4, "height": 2 }
+                        "layout": { "x": 4, "y": 2, "width": 4, "height": 2 }
                     },
                     {
-                        "id": 5305338104908224,
+                        "id": 7840245475561476,
                         "definition": {
-                            "title": "Transactions Per Second",
+                            "title": "Voting Power",
                             "title_size": "16",
                             "title_align": "left",
                             "type": "query_value",
                             "requests": [{
-                                "response_format": "scalar",
+                                "formulas": [{
+                                    "number_format": {
+                                        "unit": { "label": "%", "type": "custom_unit_label" }
+                                    },
+                                    "formula": "query1 / 100"
+                                }],
                                 "queries": [{
                                     "data_source": "metrics",
                                     "name": "query1",
-                                    "query": "avg:sui.validator.total_transaction_effects.count{$env, $name, $service, $chain_id}.as_rate()",
-                                    "aggregator": "avg"
+                                    "query": "max:sui.validator.current_voting_right{$env,$name,$service,$chain_id}",
+                                    "aggregator": "last"
                                 }],
+                                "response_format": "scalar",
                                 "conditional_formats": [{
-                                        "comparator": "=",
-                                        "value": 0,
-                                        "palette": "white_on_red"
-                                    },
-                                    {
                                         "comparator": ">",
                                         "value": 0,
                                         "palette": "white_on_green"
-                                    }
-                                ],
-                                "formulas": [{
-                                    "number_format": {
-                                        "unit": {
-                                            "type": "custom_unit_label",
-                                            "label": "tx/sec"
-                                        }
                                     },
-                                    "formula": "query1"
-                                }]
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ]
                             }],
                             "autoscale": true,
                             "precision": 2,
@@ -190,57 +230,31 @@
                                 "type": "area"
                             }
                         },
-                        "layout": { "x": 4, "y": 1, "width": 4, "height": 2 }
+                        "layout": { "x": 8, "y": 2, "width": 4, "height": 2 }
                     },
                     {
-                        "id": 1334456220032180,
+                        "id": 1045816112942340,
                         "definition": {
-                            "title": "Certificates",
+                            "title": "Certificates Processed",
                             "title_size": "16",
                             "title_align": "left",
                             "type": "query_value",
                             "requests": [{
                                 "response_format": "scalar",
                                 "queries": [{
-                                        "data_source": "metrics",
-                                        "name": "query1",
-                                        "query": "max:sui.validator.certificates_created.count{$env, $name, $service, $chain_id}.as_count()",
-                                        "aggregator": "sum"
-                                    },
-                                    {
-                                        "data_source": "metrics",
-                                        "name": "query2",
-                                        "query": "max:sui.validator.certificates_processed.count{source:own, $env, $name, $service, $chain_id}.as_count()",
-                                        "aggregator": "sum"
-                                    }
-                                ],
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:sui.validator.consensus_committed_messages{$env,$name,$service,$chain_id}",
+                                    "aggregator": "last"
+                                }],
                                 "conditional_formats": [{
-                                        "comparator": "<=",
-                                        "value": 80,
-                                        "palette": "white_on_red"
-                                    },
-                                    {
-                                        "comparator": "<=",
-                                        "value": 90,
-                                        "palette": "white_on_yellow"
-                                    },
-                                    {
-                                        "comparator": "<=",
-                                        "value": 95,
-                                        "palette": "black_on_light_green"
-                                    },
-                                    {
                                         "comparator": ">",
-                                        "value": 95,
+                                        "value": 0,
                                         "palette": "white_on_green"
-                                    }
-                                ],
-                                "formulas": [{
-                                    "number_format": {
-                                        "unit": { "label": "%", "type": "custom_unit_label" }
                                     },
-                                    "formula": "query1 / query2 * 100"
-                                }]
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
+                                "formulas": [{ "formula": "query1" }]
                             }],
                             "autoscale": false,
                             "precision": 0,
@@ -249,186 +263,156 @@
                                 "type": "area"
                             }
                         },
-                        "layout": { "x": 8, "y": 1, "width": 4, "height": 2 }
+                        "layout": { "x": 0, "y": 4, "width": 4, "height": 2 }
                     },
                     {
-                        "id": 418087301405472,
+                        "id": 3238090546064934,
                         "definition": {
-                            "title": "Epoch",
+                            "title": "Proposed Blocks",
                             "title_size": "16",
                             "title_align": "left",
-                            "time": {},
                             "type": "query_value",
                             "requests": [{
                                 "response_format": "scalar",
                                 "queries": [{
                                     "data_source": "metrics",
                                     "name": "query1",
-                                    "query": "max:sui.validator.current_epoch{$env, $name, $service, $chain_id}",
-                                    "aggregator": "last"
+                                    "query": "sum:sui.validator.consensus_proposed_blocks.count{$env,$name,$service,$chain_id}.as_count()",
+                                    "aggregator": "sum"
                                 }],
                                 "conditional_formats": [{
-                                    "comparator": ">",
-                                    "value": 0,
-                                    "palette": "white_on_green"
-                                }],
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
                                 "formulas": [{ "formula": "query1" }]
                             }],
-                            "autoscale": true,
-                            "precision": 2,
+                            "autoscale": false,
+                            "precision": 0,
                             "timeseries_background": {
                                 "yaxis": { "include_zero": false },
-                                "type": "area"
+                                "type": "bars"
                             }
                         },
-                        "layout": { "x": 0, "y": 3, "width": 4, "height": 2 }
+                        "layout": { "x": 4, "y": 4, "width": 4, "height": 2 }
                     },
                     {
-                        "id": 4202203963352682,
+                        "id": 1571311839801440,
                         "definition": {
-                            "title": "Checkpoints Per Second",
+                            "title": "Committed Messages",
                             "title_size": "16",
                             "title_align": "left",
-                            "type": "query_value",
-                            "requests": [{
-                                "formulas": [{
-                                    "number_format": {
-                                        "unit": {
-                                            "type": "custom_unit_label",
-                                            "label": "check/sec"
-                                        }
-                                    },
-                                    "formula": "1 / (query1 / query2 / 1000)"
-                                }],
-                                "queries": [{
-                                        "data_source": "metrics",
-                                        "name": "query1",
-                                        "query": "sum:sui.validator.last_executed_checkpoint_age_ms_sum.count{$env, $name, $service, $chain_id}.as_count()",
-                                        "aggregator": "avg"
-                                    },
-                                    {
-                                        "data_source": "metrics",
-                                        "name": "query2",
-                                        "query": "sum:sui.validator.last_executed_checkpoint_age_ms_count.count{$env, $name, $service, $chain_id}.as_count()",
-                                        "aggregator": "avg"
-                                    }
-                                ],
-                                "response_format": "scalar",
-                                "conditional_formats": [{
-                                    "comparator": ">",
-                                    "value": 0,
-                                    "palette": "white_on_green"
-                                }]
-                            }],
-                            "autoscale": true,
-                            "precision": 2,
-                            "timeseries_background": {
-                                "yaxis": { "include_zero": false },
-                                "type": "area"
-                            }
-                        },
-                        "layout": { "x": 4, "y": 3, "width": 4, "height": 2 }
-                    },
-                    {
-                        "id": 4263007771972054,
-                        "definition": {
-                            "title": "Rounds",
-                            "title_size": "16",
-                            "title_align": "left",
-                            "type": "query_value",
-                            "requests": [{
-                                "response_format": "scalar",
-                                "queries": [{
-                                        "data_source": "metrics",
-                                        "name": "query1",
-                                        "query": "max:sui.validator.last_committed_round{$env, $name, $service, $chain_id}",
-                                        "aggregator": "last"
-                                    },
-                                    {
-                                        "data_source": "metrics",
-                                        "name": "query2",
-                                        "query": "max:sui.validator.current_round{$env, $name, $service, $chain_id}",
-                                        "aggregator": "last"
-                                    }
-                                ],
-                                "conditional_formats": [{
-                                        "comparator": "<=",
-                                        "value": 80,
-                                        "palette": "white_on_red"
-                                    },
-                                    {
-                                        "comparator": "<=",
-                                        "value": 90,
-                                        "palette": "white_on_yellow"
-                                    },
-                                    {
-                                        "comparator": "<=",
-                                        "value": 95,
-                                        "palette": "black_on_light_green"
-                                    },
-                                    {
-                                        "comparator": ">",
-                                        "value": 95,
-                                        "palette": "white_on_green"
-                                    }
-                                ],
-                                "formulas": [{
-                                    "number_format": {
-                                        "unit": { "label": "%", "type": "custom_unit_label" }
-                                    },
-                                    "formula": "query1 / query2 * 100"
-                                }]
-                            }],
-                            "autoscale": true,
-                            "precision": 2,
-                            "timeseries_background": {
-                                "yaxis": { "include_zero": false },
-                                "type": "area"
-                            }
-                        },
-                        "layout": { "x": 8, "y": 3, "width": 4, "height": 2 }
-                    },
-                    {
-                        "id": 1275642278397714,
-                        "definition": {
-                            "title": "Epoch Duration",
-                            "title_size": "16",
-                            "title_align": "left",
-                            "time": {},
                             "type": "query_value",
                             "requests": [{
                                 "response_format": "scalar",
                                 "queries": [{
                                     "data_source": "metrics",
                                     "name": "query1",
-                                    "query": "max:sui.validator.epoch_total_duration{$env,$name,$service,$chain_id}",
+                                    "query": "sum:sui.validator.consensus_committed_messages{$env,$name,$service,$chain_id, authority:$name.value}",
+                                    "aggregator": "sum"
+                                }],
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
+                                "formulas": [{ "formula": "query1" }]
+                            }],
+                            "autoscale": false,
+                            "precision": 0,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "bars"
+                            }
+                        },
+                        "layout": { "x": 8, "y": 4, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 1285525049984878,
+                        "definition": {
+                            "type": "note",
+                            "content": "Checkpoints",
+                            "background_color": "blue",
+                            "font_size": "24",
+                            "text_align": "center",
+                            "vertical_align": "center",
+                            "show_tick": true,
+                            "tick_pos": "50%",
+                            "tick_edge": "right"
+                        },
+                        "layout": { "x": 0, "y": 6, "width": 4, "height": 1 }
+                    },
+                    {
+                        "id": 2216133589372366,
+                        "definition": {
+                            "type": "note",
+                            "content": "Rounds",
+                            "background_color": "orange",
+                            "font_size": "24",
+                            "text_align": "center",
+                            "vertical_align": "center",
+                            "show_tick": true,
+                            "tick_pos": "50%",
+                            "tick_edge": "right"
+                        },
+                        "layout": { "x": 4, "y": 6, "width": 4, "height": 1 }
+                    },
+                    {
+                        "id": 8643357842508610,
+                        "definition": {
+                            "type": "note",
+                            "content": "Sync Status",
+                            "background_color": "green",
+                            "font_size": "24",
+                            "text_align": "center",
+                            "vertical_align": "center",
+                            "show_tick": true,
+                            "tick_pos": "50%",
+                            "tick_edge": "bottom"
+                        },
+                        "layout": { "x": 8, "y": 6, "width": 4, "height": 1 }
+                    },
+                    {
+                        "id": 4494782249934418,
+                        "definition": {
+                            "title": "Highest Synced Checkpoint",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "response_format": "scalar",
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:sui.validator.highest_synced_checkpoint{$env, $name, $service, $chain_id}",
                                     "aggregator": "last"
                                 }],
                                 "conditional_formats": [{
-                                    "comparator": ">",
-                                    "value": 0,
-                                    "palette": "white_on_green"
-                                }],
-                                "formulas": [{
-                                    "formula": "query1 / 1000 / 86400",
-                                    "number_format": {
-                                        "unit": { "type": "canonical_unit", "unit_name": "day" }
-                                    }
-                                }]
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
+                                "formulas": [{ "formula": "query1" }]
                             }],
-                            "autoscale": true,
-                            "precision": 2,
+                            "autoscale": false,
+                            "precision": 0,
                             "timeseries_background": {
                                 "yaxis": { "include_zero": false },
                                 "type": "area"
                             }
                         },
-                        "layout": { "x": 0, "y": 5, "width": 4, "height": 2 }
+                        "layout": { "x": 0, "y": 7, "width": 4, "height": 2 }
                     },
                     {
-                        "id": 2035270393513880,
+                        "id": 5484305202948452,
                         "definition": {
-                            "title": "Certificates Per Second",
+                            "title": "Consensus Clock Round",
                             "title_size": "16",
                             "title_align": "left",
                             "type": "query_value",
@@ -437,43 +421,26 @@
                                 "queries": [{
                                     "data_source": "metrics",
                                     "name": "query1",
-                                    "query": "avg:sui.validator.certificates_created.count{$env, $name, $service, $chain_id}.as_rate()",
-                                    "aggregator": "avg"
+                                    "query": "max:sui.validator.consensus_threshold_clock_round{$env,$name,$service,$chain_id}",
+                                    "aggregator": "last"
                                 }],
                                 "conditional_formats": [{
-                                        "comparator": "<=",
-                                        "value": 0.5,
-                                        "palette": "white_on_red"
-                                    },
-                                    {
-                                        "comparator": "<",
-                                        "value": 1,
-                                        "palette": "white_on_yellow"
-                                    },
-                                    {
-                                        "comparator": ">=",
-                                        "value": 1,
+                                        "comparator": ">",
+                                        "value": 0,
                                         "palette": "white_on_green"
-                                    }
-                                ],
-                                "formulas": [{
-                                    "number_format": {
-                                        "unit": {
-                                            "type": "custom_unit_label",
-                                            "label": "cert/sec"
-                                        }
                                     },
-                                    "formula": "query1"
-                                }]
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
+                                "formulas": [{ "formula": "query1" }]
                             }],
-                            "autoscale": true,
-                            "precision": 2,
+                            "autoscale": false,
+                            "precision": 0,
                             "timeseries_background": {
                                 "yaxis": { "include_zero": false },
                                 "type": "area"
                             }
                         },
-                        "layout": { "x": 4, "y": 5, "width": 4, "height": 2 }
+                        "layout": { "x": 4, "y": 7, "width": 4, "height": 2 }
                     },
                     {
                         "id": 707037810629098,
@@ -532,146 +499,7 @@
                                 "type": "area"
                             }
                         },
-                        "layout": { "x": 8, "y": 5, "width": 4, "height": 2 }
-                    },
-                    {
-                        "id": 1285525049984878,
-                        "definition": {
-                            "type": "note",
-                            "content": "Checkpoints",
-                            "background_color": "purple",
-                            "font_size": "24",
-                            "text_align": "center",
-                            "vertical_align": "center",
-                            "show_tick": true,
-                            "tick_pos": "50%",
-                            "tick_edge": "right"
-                        },
-                        "layout": { "x": 0, "y": 7, "width": 4, "height": 1 }
-                    },
-                    {
-                        "id": 2216133589372366,
-                        "definition": {
-                            "type": "note",
-                            "content": "Rounds",
-                            "background_color": "pink",
-                            "font_size": "24",
-                            "text_align": "center",
-                            "vertical_align": "center",
-                            "show_tick": true,
-                            "tick_pos": "50%",
-                            "tick_edge": "right"
-                        },
-                        "layout": { "x": 4, "y": 7, "width": 4, "height": 1 }
-                    },
-                    {
-                        "id": 905604377544258,
-                        "definition": {
-                            "type": "note",
-                            "content": "Certificates",
-                            "background_color": "yellow",
-                            "font_size": "24",
-                            "text_align": "center",
-                            "vertical_align": "center",
-                            "show_tick": true,
-                            "tick_pos": "50%",
-                            "tick_edge": "bottom"
-                        },
-                        "layout": { "x": 8, "y": 7, "width": 4, "height": 1 }
-                    },
-                    {
-                        "id": 4494782249934418,
-                        "definition": {
-                            "title": "Highest Synced Checkpoint",
-                            "title_size": "16",
-                            "title_align": "left",
-                            "type": "query_value",
-                            "requests": [{
-                                "response_format": "scalar",
-                                "queries": [{
-                                    "data_source": "metrics",
-                                    "name": "query1",
-                                    "query": "max:sui.validator.highest_synced_checkpoint{$env, $name, $service, $chain_id}",
-                                    "aggregator": "last"
-                                }],
-                                "conditional_formats": [{
-                                    "comparator": ">",
-                                    "value": 0,
-                                    "palette": "white_on_green"
-                                }],
-                                "formulas": [{ "formula": "query1" }]
-                            }],
-                            "autoscale": false,
-                            "precision": 0,
-                            "timeseries_background": {
-                                "yaxis": { "include_zero": false },
-                                "type": "area"
-                            }
-                        },
-                        "layout": { "x": 0, "y": 8, "width": 4, "height": 2 }
-                    },
-                    {
-                        "id": 3466035848341556,
-                        "definition": {
-                            "title": "Current Round",
-                            "title_size": "16",
-                            "title_align": "left",
-                            "type": "query_value",
-                            "requests": [{
-                                "response_format": "scalar",
-                                "queries": [{
-                                    "data_source": "metrics",
-                                    "name": "query1",
-                                    "query": "max:sui.validator.current_round{$env, $name, $service, $chain_id}",
-                                    "aggregator": "last"
-                                }],
-                                "conditional_formats": [{
-                                    "comparator": ">",
-                                    "value": 0,
-                                    "palette": "white_on_green"
-                                }],
-                                "formulas": [{ "formula": "query1" }]
-                            }],
-                            "autoscale": false,
-                            "precision": 0,
-                            "timeseries_background": {
-                                "yaxis": { "include_zero": false },
-                                "type": "area"
-                            }
-                        },
-                        "layout": { "x": 4, "y": 8, "width": 4, "height": 2 }
-                    },
-                    {
-                        "id": 3600505824949532,
-                        "definition": {
-                            "title": "Certificates Created",
-                            "title_size": "16",
-                            "title_align": "left",
-                            "time": {},
-                            "type": "query_value",
-                            "requests": [{
-                                "response_format": "scalar",
-                                "queries": [{
-                                    "data_source": "metrics",
-                                    "name": "query1",
-                                    "query": "max:sui.validator.certificates_created.count{$env, $name, $service, $chain_id}.as_count()",
-                                    "aggregator": "sum"
-                                }],
-                                "conditional_formats": [{
-                                    "comparator": ">",
-                                    "value": 0,
-                                    "palette": "white_on_green"
-                                }],
-                                "formulas": [{ "formula": "query1" }]
-                            }],
-                            "autoscale": false,
-                            "precision": 0,
-                            "timeseries_background": {
-                                "yaxis": { "include_zero": false },
-                                "type": "area"
-                            }
-                        },
-                        "layout": { "x": 8, "y": 8, "width": 4, "height": 2 }
+                        "layout": { "x": 8, "y": 7, "width": 4, "height": 2 }
                     },
                     {
                         "id": 7842170265287410,
@@ -689,10 +517,12 @@
                                     "aggregator": "last"
                                 }],
                                 "conditional_formats": [{
-                                    "comparator": ">",
-                                    "value": 0,
-                                    "palette": "white_on_green"
-                                }],
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
                                 "formulas": [{ "formula": "query1" }]
                             }],
                             "autoscale": false,
@@ -702,29 +532,155 @@
                                 "type": "area"
                             }
                         },
-                        "layout": { "x": 0, "y": 10, "width": 4, "height": 2 }
+                        "layout": { "x": 0, "y": 9, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 3466035848341556,
+                        "definition": {
+                            "title": "Last Committed Leader Round",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "response_format": "scalar",
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:sui.validator.consensus_last_committed_leader_round{$env, $name, $service, $chain_id}",
+                                    "aggregator": "last"
+                                }],
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
+                                "formulas": [{ "formula": "query1" }]
+                            }],
+                            "autoscale": false,
+                            "precision": 0,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "area"
+                            }
+                        },
+                        "layout": { "x": 4, "y": 9, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 6361947507373654,
+                        "definition": {
+                            "title": "Rounds",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "response_format": "scalar",
+                                "queries": [{
+                                        "data_source": "metrics",
+                                        "name": "query1",
+                                        "query": "max:sui.validator.consensus_last_committed_leader_round{$env,$name,$service,$chain_id}",
+                                        "aggregator": "last"
+                                    },
+                                    {
+                                        "data_source": "metrics",
+                                        "name": "query2",
+                                        "query": "max:sui.validator.consensus_threshold_clock_round{$env,$name,$service,$chain_id}",
+                                        "aggregator": "last"
+                                    }
+                                ],
+                                "conditional_formats": [{
+                                        "comparator": "<=",
+                                        "value": 80,
+                                        "palette": "white_on_red"
+                                    },
+                                    {
+                                        "comparator": "<=",
+                                        "value": 90,
+                                        "palette": "white_on_yellow"
+                                    },
+                                    {
+                                        "comparator": "<=",
+                                        "value": 95,
+                                        "palette": "black_on_light_green"
+                                    },
+                                    {
+                                        "comparator": ">",
+                                        "value": 95,
+                                        "palette": "white_on_green"
+                                    }
+                                ],
+                                "formulas": [{
+                                    "number_format": {
+                                        "unit": { "label": "%", "type": "custom_unit_label" }
+                                    },
+                                    "formula": "query1 / query2 * 100"
+                                }]
+                            }],
+                            "autoscale": true,
+                            "precision": 2,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "area"
+                            }
+                        },
+                        "layout": { "x": 8, "y": 9, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 7090246921631484,
+                        "definition": {
+                            "title": "Last Certified Checkpoint",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "response_format": "scalar",
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:sui.validator.last_certified_checkpoint{$env,$name,$service,$chain_id}",
+                                    "aggregator": "last"
+                                }],
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
+                                "formulas": [{ "formula": "query1" }]
+                            }],
+                            "autoscale": false,
+                            "precision": 0,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "area"
+                            }
+                        },
+                        "layout": { "x": 0, "y": 11, "width": 4, "height": 2 }
                     },
                     {
                         "id": 5243561397378248,
                         "definition": {
-                            "title": "Last Committed Round",
+                            "title": "Highest Accepted Round",
                             "title_size": "16",
                             "title_align": "left",
-                            "time": {},
                             "type": "query_value",
                             "requests": [{
                                 "response_format": "scalar",
                                 "queries": [{
                                     "data_source": "metrics",
                                     "name": "query1",
-                                    "query": "max:sui.validator.last_committed_round{$env,$name,$service,$chain_id}",
+                                    "query": "max:sui.validator.consensus_highest_accepted_round{$env,$name,$service,$chain_id}",
                                     "aggregator": "last"
                                 }],
                                 "conditional_formats": [{
-                                    "comparator": ">",
-                                    "value": 0,
-                                    "palette": "white_on_green"
-                                }],
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
                                 "formulas": [{ "formula": "query1" }]
                             }],
                             "autoscale": false,
@@ -734,43 +690,11 @@
                                 "type": "area"
                             }
                         },
-                        "layout": { "x": 4, "y": 10, "width": 4, "height": 2 }
-                    },
-                    {
-                        "id": 622447136005142,
-                        "definition": {
-                            "title": "Certificates Processed",
-                            "title_size": "16",
-                            "title_align": "left",
-                            "time": {},
-                            "type": "query_value",
-                            "requests": [{
-                                "response_format": "scalar",
-                                "queries": [{
-                                    "data_source": "metrics",
-                                    "name": "query1",
-                                    "query": "max:sui.validator.certificates_processed.count{$env,$name,$service,$chain_id, source:own}.as_count()",
-                                    "aggregator": "sum"
-                                }],
-                                "conditional_formats": [{
-                                    "comparator": ">",
-                                    "value": 0,
-                                    "palette": "white_on_green"
-                                }],
-                                "formulas": [{ "formula": "query1" }]
-                            }],
-                            "autoscale": false,
-                            "precision": 0,
-                            "timeseries_background": {
-                                "yaxis": { "include_zero": false },
-                                "type": "area"
-                            }
-                        },
-                        "layout": { "x": 8, "y": 10, "width": 4, "height": 2 }
+                        "layout": { "x": 4, "y": 11, "width": 4, "height": 2 }
                     }
                 ]
             },
-            "layout": { "x": 0, "y": 12, "width": 12, "height": 13 }
+            "layout": { "x": 0, "y": 12, "width": 12, "height": 14 }
         },
         {
             "id": 6356301028025336,
@@ -799,131 +723,42 @@
                     {
                         "id": 7113676462564200,
                         "definition": {
-                            "title": "Cert Execution Latency: p50 Shared Objects",
+                            "title": "Consensus Adapter e2e Latency",
                             "title_size": "16",
                             "title_align": "left",
                             "type": "query_value",
                             "requests": [{
                                 "formulas": [{
                                     "number_format": {
-                                        "unit": { "label": "sec", "type": "custom_unit_label" }
+                                        "unit": {
+                                            "type": "canonical_unit",
+                                            "unit_name": "second"
+                                        }
                                     },
-                                    "formula": "query1 / 1000"
+                                    "formula": "query1 / query2"
                                 }],
                                 "queries": [{
-                                    "data_source": "metrics",
-                                    "name": "query1",
-                                    "query": "avg:sui.validator.validator_service_handle_certificate_consensus_latency{pct:50, $env, $name, $service, $chain_id}",
-                                    "aggregator": "last"
-                                }],
-                                "response_format": "scalar",
-                                "conditional_formats": [{
-                                        "comparator": ">=",
-                                        "value": 10,
-                                        "palette": "white_on_red"
+                                        "data_source": "metrics",
+                                        "name": "query1",
+                                        "query": "sum:sui.validator.sequencing_certificate_latency.sum{$env, $name, $service, $chain_id}.as_count()",
+                                        "aggregator": "last"
                                     },
                                     {
-                                        "comparator": ">=",
-                                        "value": 5,
-                                        "palette": "white_on_yellow"
-                                    },
-                                    {
-                                        "comparator": "<",
-                                        "value": 5,
-                                        "palette": "white_on_green"
+                                        "data_source": "metrics",
+                                        "name": "query2",
+                                        "query": "sum:sui.validator.sequencing_certificate_latency.count{$env, $name, $service, $chain_id}.as_count()",
+                                        "aggregator": "last"
                                     }
-                                ]
-                            }],
-                            "autoscale": true,
-                            "precision": 2,
-                            "timeseries_background": {
-                                "yaxis": { "include_zero": false },
-                                "type": "area"
-                            }
-                        },
-                        "layout": { "x": 0, "y": 1, "width": 4, "height": 2 }
-                    },
-                    {
-                        "id": 3772692247779896,
-                        "definition": {
-                            "title": "Cert Execution Latency: p95 Shared Objects",
-                            "title_size": "16",
-                            "title_align": "left",
-                            "type": "query_value",
-                            "requests": [{
-                                "formulas": [{
-                                    "number_format": {
-                                        "unit": { "label": "sec", "type": "custom_unit_label" }
-                                    },
-                                    "formula": "query1 / 1000"
-                                }],
-                                "queries": [{
-                                    "data_source": "metrics",
-                                    "name": "query1",
-                                    "query": "avg:sui.validator.validator_service_handle_certificate_consensus_latency{pct:95, $env, $name, $service, $chain_id}",
-                                    "aggregator": "last"
-                                }],
+                                ],
                                 "response_format": "scalar",
                                 "conditional_formats": [{
                                         "comparator": ">=",
-                                        "value": 10,
+                                        "value": 3,
                                         "palette": "white_on_red"
                                     },
                                     {
-                                        "comparator": ">=",
-                                        "value": 5,
-                                        "palette": "white_on_yellow"
-                                    },
-                                    {
                                         "comparator": "<",
-                                        "value": 5,
-                                        "palette": "white_on_green"
-                                    }
-                                ]
-                            }],
-                            "autoscale": true,
-                            "precision": 2,
-                            "timeseries_background": {
-                                "yaxis": { "include_zero": false },
-                                "type": "area"
-                            }
-                        },
-                        "layout": { "x": 4, "y": 1, "width": 4, "height": 2 }
-                    },
-                    {
-                        "id": 7298666276904534,
-                        "definition": {
-                            "title": "Cert Processing Latency: p95 Owned Objects",
-                            "title_size": "16",
-                            "title_align": "left",
-                            "type": "query_value",
-                            "requests": [{
-                                "formulas": [{
-                                    "number_format": {
-                                        "unit": { "label": "sec", "type": "custom_unit_label" }
-                                    },
-                                    "formula": "query1 / 1000"
-                                }],
-                                "queries": [{
-                                    "data_source": "metrics",
-                                    "name": "query1",
-                                    "query": "avg:sui.validator.validator_service_handle_certificate_non_consensus_latency{pct:95, $env, $name, $service, $chain_id}",
-                                    "aggregator": "last"
-                                }],
-                                "response_format": "scalar",
-                                "conditional_formats": [{
-                                        "comparator": ">=",
-                                        "value": 10,
-                                        "palette": "white_on_red"
-                                    },
-                                    {
-                                        "comparator": ">=",
-                                        "value": 5,
-                                        "palette": "white_on_yellow"
-                                    },
-                                    {
-                                        "comparator": "<",
-                                        "value": 5,
+                                        "value": 3,
                                         "palette": "white_on_green"
                                     }
                                 ]
@@ -935,12 +770,124 @@
                                 "type": "area"
                             }
                         },
+                        "layout": { "x": 0, "y": 1, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 3772692247779896,
+                        "definition": {
+                            "title": "Shared Objects Certificates Execution Latency",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "canonical_unit",
+                                            "unit_name": "second"
+                                        },
+                                        "unit_scale": {
+                                            "type": "canonical_unit",
+                                            "unit_name": "second"
+                                        }
+                                    },
+                                    "formula": "query1 / query2"
+                                }],
+                                "queries": [{
+                                        "data_source": "metrics",
+                                        "name": "query1",
+                                        "query": "sum:sui.validator.validator_service_handle_certificate_consensus_latency.sum{$env, $name, $service, $chain_id}.as_count()",
+                                        "aggregator": "last"
+                                    },
+                                    {
+                                        "data_source": "metrics",
+                                        "name": "query2",
+                                        "query": "sum:sui.validator.validator_service_handle_certificate_consensus_latency.count{$env, $name, $service, $chain_id}.as_count()",
+                                        "aggregator": "last"
+                                    }
+                                ],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">=",
+                                        "value": 5,
+                                        "palette": "white_on_red"
+                                    },
+                                    {
+                                        "comparator": "<",
+                                        "value": 5,
+                                        "palette": "white_on_green"
+                                    }
+                                ]
+                            }],
+                            "autoscale": true,
+                            "precision": 2,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "bars"
+                            }
+                        },
+                        "layout": { "x": 4, "y": 1, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 7298666276904534,
+                        "definition": {
+                            "title": "Owned Objects Certificates Execution Latency",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{
+                                    "formula": "query1 / query2",
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "canonical_unit",
+                                            "unit_name": "second"
+                                        },
+                                        "unit_scale": {
+                                            "type": "canonical_unit",
+                                            "unit_name": "second"
+                                        }
+                                    }
+                                }],
+                                "queries": [{
+                                        "data_source": "metrics",
+                                        "name": "query1",
+                                        "query": "sum:sui.validator.validator_service_handle_certificate_non_consensus_latency.sum{$env, $name, $service, $chain_id}.as_count()",
+                                        "aggregator": "last"
+                                    },
+                                    {
+                                        "data_source": "metrics",
+                                        "name": "query2",
+                                        "query": "sum:sui.validator.validator_service_handle_certificate_non_consensus_latency.count{$env, $name, $service, $chain_id}.as_count()",
+                                        "aggregator": "last"
+                                    }
+                                ],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">=",
+                                        "value": 2,
+                                        "palette": "white_on_red"
+                                    },
+                                    {
+                                        "comparator": "<",
+                                        "value": 2,
+                                        "palette": "white_on_green"
+                                    }
+                                ]
+                            }],
+                            "autoscale": true,
+                            "precision": 2,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "bars"
+                            }
+                        },
                         "layout": { "x": 8, "y": 1, "width": 4, "height": 2 }
                     },
                     {
                         "id": 845557335362550,
                         "definition": {
-                            "title": "Consensus Sequencing Latency",
+                            "title": "Consensus Adapter e2e Latency",
                             "title_size": "16",
                             "title_align": "left",
                             "show_legend": true,
@@ -961,12 +908,14 @@
                                 "queries": [{
                                         "data_source": "metrics",
                                         "name": "query1",
-                                        "query": "avg:sui.validator.sequencing_certificate_latency.sum{$env, $name, $service, $chain_id}.as_rate()"
+                                        "query": "sum:sui.validator.sequencing_certificate_latency.sum{$env, $name, $service, $chain_id}",
+                                        "aggregator": "last"
                                     },
                                     {
                                         "data_source": "metrics",
                                         "name": "query2",
-                                        "query": "avg:sui.validator.sequencing_certificate_latency.count{$env, $name, $service, $chain_id}.as_rate()"
+                                        "query": "sum:sui.validator.sequencing_certificate_latency.count{$env, $name, $service, $chain_id}",
+                                        "aggregator": "last"
                                     }
                                 ],
                                 "response_format": "timeseries",
@@ -978,18 +927,13 @@
                                 "display_type": "area"
                             }],
                             "markers": [{
-                                    "label": " > 10 seconds ",
-                                    "value": "y > 10",
+                                    "label": "  > 3 seconds  ",
+                                    "value": "y > 3",
                                     "display_type": "error dashed"
                                 },
                                 {
-                                    "label": " > 8 seconds ",
-                                    "value": "8 < y < 10",
-                                    "display_type": "warning dashed"
-                                },
-                                {
-                                    "label": " < 8 seconds ",
-                                    "value": "0 < y < 8",
+                                    "label": "  < 3 seconds  ",
+                                    "value": "0 < y < 3",
                                     "display_type": "ok dashed"
                                 }
                             ]
@@ -1008,50 +952,23 @@
                             "type": "timeseries",
                             "requests": [{
                                 "formulas": [{
-                                        "alias": "p50",
-                                        "number_format": {
-                                            "unit": {
-                                                "type": "canonical_unit",
-                                                "unit_name": "second"
-                                            }
-                                        },
-                                        "formula": "query1 / 1000"
-                                    },
-                                    {
-                                        "alias": "p95",
-                                        "number_format": {
-                                            "unit": {
-                                                "type": "canonical_unit",
-                                                "unit_name": "second"
-                                            }
-                                        },
-                                        "formula": "query2 / 1000"
-                                    },
-                                    {
-                                        "alias": "p99",
-                                        "number_format": {
-                                            "unit": {
-                                                "type": "canonical_unit",
-                                                "unit_name": "second"
-                                            }
-                                        },
-                                        "formula": "query3 / 1000"
+                                    "formula": "query1 / query2",
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "canonical_unit",
+                                            "unit_name": "second"
+                                        }
                                     }
-                                ],
+                                }],
                                 "queries": [{
                                         "data_source": "metrics",
                                         "name": "query1",
-                                        "query": "avg:sui.validator.validator_service_handle_certificate_consensus_latency{$env, $name, $service, $chain_id}"
+                                        "query": "sum:sui.validator.validator_service_handle_certificate_consensus_latency.sum{$env, $name, $service, $chain_id}.as_count()"
                                     },
                                     {
                                         "data_source": "metrics",
                                         "name": "query2",
-                                        "query": "avg:sui.validator.validator_service_handle_certificate_consensus_latency{$env, $name, $service, $chain_id}"
-                                    },
-                                    {
-                                        "data_source": "metrics",
-                                        "name": "query3",
-                                        "query": "avg:sui.validator.validator_service_handle_certificate_consensus_latency{$env, $name, $service, $chain_id}"
+                                        "query": "sum:sui.validator.validator_service_handle_certificate_consensus_latency.count{$env, $name, $service, $chain_id}.as_count()"
                                     }
                                 ],
                                 "response_format": "timeseries",
@@ -1068,13 +985,8 @@
                                     "display_type": "error dashed"
                                 },
                                 {
-                                    "label": " > 4 seconds ",
-                                    "value": "4 < y < 5",
-                                    "display_type": "warning dashed"
-                                },
-                                {
-                                    "label": " < 4 seconds ",
-                                    "value": "0 < y < 4",
+                                    "label": "  < 5 seconds  ",
+                                    "value": "0 < y < 5",
                                     "display_type": "ok dashed"
                                 }
                             ]
@@ -1093,47 +1005,23 @@
                             "type": "timeseries",
                             "requests": [{
                                 "formulas": [{
-                                        "number_format": {
-                                            "unit": {
-                                                "type": "canonical_unit",
-                                                "unit_name": "second"
-                                            }
-                                        },
-                                        "formula": "query1 / 1000"
-                                    },
-                                    {
-                                        "number_format": {
-                                            "unit": {
-                                                "type": "canonical_unit",
-                                                "unit_name": "second"
-                                            }
-                                        },
-                                        "formula": "query2 / 1000"
-                                    },
-                                    {
-                                        "number_format": {
-                                            "unit": {
-                                                "type": "canonical_unit",
-                                                "unit_name": "second"
-                                            }
-                                        },
-                                        "formula": "query3 / 1000"
+                                    "formula": "query1 / query2",
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "canonical_unit",
+                                            "unit_name": "second"
+                                        }
                                     }
-                                ],
+                                }],
                                 "queries": [{
                                         "data_source": "metrics",
                                         "name": "query1",
-                                        "query": "avg:sui.validator.validator_service_handle_certificate_non_consensus_latency{$env, $name, $service, $chain_id}"
+                                        "query": "sum:sui.validator.validator_service_handle_certificate_non_consensus_latency.sum{$env, $name, $service, $chain_id}.as_count()"
                                     },
                                     {
                                         "data_source": "metrics",
                                         "name": "query2",
-                                        "query": "avg:sui.validator.validator_service_handle_certificate_non_consensus_latency{$env, $name, $service, $chain_id}"
-                                    },
-                                    {
-                                        "data_source": "metrics",
-                                        "name": "query3",
-                                        "query": "avg:sui.validator.validator_service_handle_certificate_non_consensus_latency{$env, $name, $service, $chain_id}"
+                                        "query": "sum:sui.validator.validator_service_handle_certificate_non_consensus_latency.count{$env, $name, $service, $chain_id}.as_count()"
                                     }
                                 ],
                                 "response_format": "timeseries",
@@ -1145,14 +1033,9 @@
                                 "display_type": "line"
                             }],
                             "markers": [{
-                                    "label": " > 3 seconds ",
-                                    "value": "y > 3",
+                                    "label": "  > 2 seconds  ",
+                                    "value": "y > 2",
                                     "display_type": "error dashed"
-                                },
-                                {
-                                    "label": " > 2 seconds  ",
-                                    "value": "2 < y < 3",
-                                    "display_type": "warning dashed"
                                 },
                                 {
                                     "label": " < 2 seconds ",
@@ -1187,98 +1070,33 @@
                             "show_legend": true,
                             "legend_layout": "horizontal",
                             "legend_columns": ["avg", "min", "max", "value", "sum"],
-                            "time": {},
                             "type": "timeseries",
                             "requests": [{
                                 "formulas": [
-                                    { "alias": "Proposal Rate", "formula": "query1" }
+                                    { "alias": "Proposal Rate", "formula": "query1 + query2" }
                                 ],
                                 "queries": [{
-                                    "data_source": "metrics",
-                                    "name": "query1",
-                                    "query": "avg:sui.validator.certificates_created.count{$env, $name, $service, $chain_id}.as_rate()"
-                                }],
+                                        "data_source": "metrics",
+                                        "name": "query1",
+                                        "query": "sum:sui.validator.consensus_proposed_blocks.count{$env, $name, $service, $chain_id, force:true}.as_rate()"
+                                    },
+                                    {
+                                        "data_source": "metrics",
+                                        "name": "query2",
+                                        "query": "sum:sui.validator.consensus_proposed_blocks.count{$env, $name, $service, $chain_id, force:false}.as_rate()"
+                                    }
+                                ],
                                 "response_format": "timeseries",
                                 "style": {
-                                    "palette": "cool",
+                                    "palette": "dog_classic",
                                     "line_type": "solid",
                                     "line_width": "normal"
                                 },
                                 "display_type": "bars"
                             }],
-                            "markers": [{
-                                    "label": " < 0.5 certificates ",
-                                    "value": "y < 0.5",
-                                    "display_type": "error dashed"
-                                },
-                                {
-                                    "label": " < 1 certificate ",
-                                    "value": "0.5 < y < 1",
-                                    "display_type": "warning dashed"
-                                },
-                                {
-                                    "label": " >= 1 certificate ",
-                                    "value": "y > 1",
-                                    "display_type": "ok dashed"
-                                }
-                            ]
+                            "markers": []
                         },
                         "layout": { "x": 0, "y": 8, "width": 4, "height": 4 }
-                    },
-                    {
-                        "id": 3707230239170586,
-                        "definition": {
-                            "title": "Transaction Certificate Processing Rate",
-                            "title_size": "16",
-                            "title_align": "left",
-                            "show_legend": true,
-                            "legend_layout": "horizontal",
-                            "legend_columns": ["avg", "min", "max", "value", "sum"],
-                            "time": {},
-                            "type": "timeseries",
-                            "requests": [{
-                                "formulas": [{
-                                        "alias": "Shared Objects Certificates",
-                                        "number_format": {
-                                            "unit": {
-                                                "type": "custom_unit_label",
-                                                "label": "Cert/Sec"
-                                            }
-                                        },
-                                        "formula": "query1"
-                                    },
-                                    {
-                                        "alias": "Owned Objects Certificates",
-                                        "number_format": {
-                                            "unit": {
-                                                "type": "custom_unit_label",
-                                                "label": "Cert/Sec"
-                                            }
-                                        },
-                                        "formula": "default_zero(query2 - query1)"
-                                    }
-                                ],
-                                "queries": [{
-                                        "data_source": "metrics",
-                                        "name": "query1",
-                                        "query": "avg:sui.validator.num_shared_obj_tx.count{$env, $name, $service, $chain_id}.as_rate()"
-                                    },
-                                    {
-                                        "data_source": "metrics",
-                                        "name": "query2",
-                                        "query": "avg:sui.validator.total_transaction_certificates.count{$env, $name, $service, $chain_id}.as_rate()"
-                                    }
-                                ],
-                                "response_format": "timeseries",
-                                "style": {
-                                    "palette": "cool",
-                                    "line_type": "solid",
-                                    "line_width": "normal"
-                                },
-                                "display_type": "bars"
-                            }]
-                        },
-                        "layout": { "x": 4, "y": 8, "width": 4, "height": 4 }
                     },
                     {
                         "id": 7104067459294,
@@ -1289,7 +1107,6 @@
                             "show_legend": true,
                             "legend_layout": "horizontal",
                             "legend_columns": ["avg", "min", "max", "value", "sum"],
-                            "time": {},
                             "type": "timeseries",
                             "requests": [{
                                 "formulas": [{
@@ -1305,12 +1122,12 @@
                                 "queries": [{
                                         "data_source": "metrics",
                                         "name": "query1",
-                                        "query": "sum:sui.validator.proposer_batch_latency.sum{$env, $name, $service, $chain_id}.as_rate()"
+                                        "query": "sum:sui.validator.consensus_quorum_receive_latency.sum{$env, $name, $service, $chain_id}.as_rate()"
                                     },
                                     {
                                         "data_source": "metrics",
                                         "name": "query2",
-                                        "query": "sum:sui.validator.proposer_batch_latency.count{$env, $name, $service, $chain_id}.as_rate()"
+                                        "query": "sum:sui.validator.consensus_quorum_receive_latency.count{$env, $name, $service, $chain_id}.as_rate()"
                                     }
                                 ],
                                 "response_format": "timeseries",
@@ -1321,22 +1138,45 @@
                                 },
                                 "display_type": "bars"
                             }],
-                            "markers": [{
-                                    "label": " > 2 seconds ",
-                                    "value": "y > 2",
-                                    "display_type": "error dashed"
+                            "markers": []
+                        },
+                        "layout": { "x": 4, "y": 8, "width": 4, "height": 4 }
+                    },
+                    {
+                        "id": 3707230239170586,
+                        "definition": {
+                            "title": "Leader Round Rate",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": true,
+                            "legend_layout": "horizontal",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "custom_unit_label",
+                                            "label": "r/sec"
+                                        }
+                                    },
+                                    "alias": "Leader Round Rate",
+                                    "style": { "palette": "green", "palette_index": 4 },
+                                    "formula": "per_second(query1)"
+                                }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "avg:sui.validator.consensus_last_committed_leader_round{$env, $name, $service, $chain_id}"
+                                }],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "cool",
+                                    "line_type": "solid",
+                                    "line_width": "normal"
                                 },
-                                {
-                                    "label": " > 1 second ",
-                                    "value": "1 < y < 2",
-                                    "display_type": "warning dashed"
-                                },
-                                {
-                                    "label": " <= 1 second ",
-                                    "value": "y < 1",
-                                    "display_type": "ok dashed"
-                                }
-                            ]
+                                "display_type": "bars"
+                            }]
                         },
                         "layout": { "x": 8, "y": 8, "width": 4, "height": 4 }
                     },
@@ -1354,6 +1194,135 @@
                             "tick_edge": "bottom"
                         },
                         "layout": { "x": 0, "y": 12, "width": 12, "height": 1 }
+                    },
+                    {
+                        "id": 5305338104908224,
+                        "definition": {
+                            "title": "Transactions Per Second",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "response_format": "scalar",
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "avg:sui.validator.total_transaction_effects.count{$env, $name, $service, $chain_id}.as_rate()",
+                                    "aggregator": "avg"
+                                }],
+                                "conditional_formats": [{
+                                        "comparator": "=",
+                                        "value": 0,
+                                        "palette": "white_on_red"
+                                    },
+                                    {
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    }
+                                ],
+                                "formulas": [{
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "custom_unit_label",
+                                            "label": "tx/sec"
+                                        }
+                                    },
+                                    "formula": "query1"
+                                }]
+                            }],
+                            "autoscale": true,
+                            "precision": 2,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "area"
+                            }
+                        },
+                        "layout": { "x": 0, "y": 13, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 4202203963352682,
+                        "definition": {
+                            "title": "Checkpoints Per Second",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "custom_unit_label",
+                                            "label": "c/sec"
+                                        }
+                                    },
+                                    "formula": "1 / (query1 / query2 / 1000)"
+                                }],
+                                "queries": [{
+                                        "data_source": "metrics",
+                                        "name": "query1",
+                                        "query": "sum:sui.validator.last_executed_checkpoint_age_ms_sum.count{$env, $name, $service, $chain_id}.as_count()",
+                                        "aggregator": "avg"
+                                    },
+                                    {
+                                        "data_source": "metrics",
+                                        "name": "query2",
+                                        "query": "sum:sui.validator.last_executed_checkpoint_age_ms_count.count{$env, $name, $service, $chain_id}.as_count()",
+                                        "aggregator": "avg"
+                                    }
+                                ],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                    "comparator": ">",
+                                    "value": 0,
+                                    "palette": "white_on_green"
+                                }]
+                            }],
+                            "autoscale": true,
+                            "precision": 2,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "area"
+                            }
+                        },
+                        "layout": { "x": 4, "y": 13, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 2697442336859524,
+                        "definition": {
+                            "title": "Proposed Blocks Per Second",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{
+                                    "formula": "query1",
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "custom_unit_label",
+                                            "label": "b/sec"
+                                        }
+                                    }
+                                }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:sui.validator.consensus_proposed_blocks.count{$env,$name,$service,$chain_id}.as_rate()"
+                                }],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                    "comparator": ">",
+                                    "value": 0,
+                                    "palette": "white_on_green"
+                                }]
+                            }],
+                            "autoscale": true,
+                            "precision": 2,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "area"
+                            }
+                        },
+                        "layout": { "x": 8, "y": 13, "width": 4, "height": 2 }
                     },
                     {
                         "id": 5342313773354294,
@@ -1400,7 +1369,7 @@
                                 "queries": [{
                                         "data_source": "metrics",
                                         "name": "query1",
-                                        "query": "avg:sui.validator.total_transaction_effects.count{$env, $name, $service, $chain_id}.as_rate()"
+                                        "query": "sum:sui.validator.total_transaction_effects.count{$env, $name, $service, $chain_id}.as_rate()"
                                     },
                                     {
                                         "data_source": "metrics",
@@ -1415,14 +1384,14 @@
                                 ],
                                 "response_format": "timeseries",
                                 "style": {
-                                    "palette": "cool",
+                                    "palette": "dog_classic",
                                     "line_type": "solid",
                                     "line_width": "normal"
                                 },
                                 "display_type": "line"
                             }]
                         },
-                        "layout": { "x": 0, "y": 13, "width": 4, "height": 4 }
+                        "layout": { "x": 0, "y": 15, "width": 4, "height": 4 }
                     },
                     {
                         "id": 3212778375893196,
@@ -1466,29 +1435,34 @@
                             }],
                             "markers": []
                         },
-                        "layout": { "x": 4, "y": 13, "width": 4, "height": 4 }
+                        "layout": { "x": 4, "y": 15, "width": 4, "height": 4 }
                     },
                     {
                         "id": 5668287917946102,
                         "definition": {
-                            "title": "Rounds Per Second",
+                            "title": "Proposed Blocks Per Second",
                             "title_size": "16",
                             "title_align": "left",
                             "show_legend": true,
                             "legend_layout": "horizontal",
                             "legend_columns": ["avg", "min", "max", "value", "sum"],
-                            "time": {},
                             "type": "timeseries",
                             "requests": [{
                                 "formulas": [{
                                     "alias": "Rounds",
                                     "style": { "palette": "green", "palette_index": 4 },
-                                    "formula": "per_second(query1)"
+                                    "formula": "query1",
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "custom_unit_label",
+                                            "label": "blocks/sec"
+                                        }
+                                    }
                                 }],
                                 "queries": [{
                                     "data_source": "metrics",
                                     "name": "query1",
-                                    "query": "avg:sui.validator.last_committed_round{$env, $name, $service, $chain_id}"
+                                    "query": "sum:sui.validator.consensus_proposed_blocks.count{$env, $name, $service, $chain_id}.as_rate()"
                                 }],
                                 "response_format": "timeseries",
                                 "style": {
@@ -1499,14 +1473,14 @@
                                 "display_type": "bars"
                             }]
                         },
-                        "layout": { "x": 8, "y": 13, "width": 4, "height": 4 }
+                        "layout": { "x": 8, "y": 15, "width": 4, "height": 4 }
                     },
                     {
                         "id": 1493740714009024,
                         "definition": {
                             "type": "note",
                             "content": "Connectivity",
-                            "background_color": "purple",
+                            "background_color": "blue",
                             "font_size": "24",
                             "text_align": "center",
                             "vertical_align": "center",
@@ -1514,28 +1488,13 @@
                             "tick_pos": "50%",
                             "tick_edge": "bottom"
                         },
-                        "layout": { "x": 0, "y": 17, "width": 4, "height": 1 }
+                        "layout": { "x": 0, "y": 19, "width": 4, "height": 1 }
                     },
                     {
                         "id": 7699613607139338,
                         "definition": {
                             "type": "note",
                             "content": "Voting Power",
-                            "background_color": "pink",
-                            "font_size": "24",
-                            "text_align": "center",
-                            "vertical_align": "center",
-                            "show_tick": true,
-                            "tick_pos": "50%",
-                            "tick_edge": "bottom"
-                        },
-                        "layout": { "x": 4, "y": 17, "width": 4, "height": 1 }
-                    },
-                    {
-                        "id": 7904249919844086,
-                        "definition": {
-                            "type": "note",
-                            "content": "Errors",
                             "background_color": "yellow",
                             "font_size": "24",
                             "text_align": "center",
@@ -1544,7 +1503,22 @@
                             "tick_pos": "50%",
                             "tick_edge": "bottom"
                         },
-                        "layout": { "x": 8, "y": 17, "width": 4, "height": 1 }
+                        "layout": { "x": 4, "y": 19, "width": 4, "height": 1 }
+                    },
+                    {
+                        "id": 7904249919844086,
+                        "definition": {
+                            "type": "note",
+                            "content": "Errors",
+                            "background_color": "green",
+                            "font_size": "24",
+                            "text_align": "center",
+                            "vertical_align": "center",
+                            "show_tick": true,
+                            "tick_pos": "50%",
+                            "tick_edge": "bottom"
+                        },
+                        "layout": { "x": 8, "y": 19, "width": 4, "height": 1 }
                     },
                     {
                         "id": 8966145455401872,
@@ -1558,7 +1532,7 @@
                                 "queries": [{
                                     "data_source": "metrics",
                                     "name": "query1",
-                                    "query": "sum:sui.validator.primary_network_peer_connected{type:other_primary ,$env, $name, $service, $chain_id}",
+                                    "query": "max:sui.validator.sui_network_peers{$env, $name, $service, $chain_id}",
                                     "aggregator": "last"
                                 }],
                                 "conditional_formats": [{
@@ -1594,7 +1568,7 @@
                                 "type": "area"
                             }
                         },
-                        "layout": { "x": 0, "y": 18, "width": 4, "height": 2 }
+                        "layout": { "x": 0, "y": 20, "width": 4, "height": 2 }
                     },
                     {
                         "id": 6170314217835058,
@@ -1630,7 +1604,7 @@
                                 "type": "area"
                             }
                         },
-                        "layout": { "x": 4, "y": 18, "width": 4, "height": 2 }
+                        "layout": { "x": 4, "y": 20, "width": 4, "height": 2 }
                     },
                     {
                         "id": 6074268625479158,
@@ -1638,7 +1612,6 @@
                             "title": "Transaction Signature Errors",
                             "title_size": "16",
                             "title_align": "left",
-                            "time": {},
                             "type": "query_value",
                             "requests": [{
                                 "formulas": [{
@@ -1671,9 +1644,12 @@
                             }],
                             "autoscale": true,
                             "precision": 0,
-                            "timeseries_background": { "type": "bars", "yaxis": {} }
+                            "timeseries_background": {
+                                "type": "area",
+                                "yaxis": { "include_zero": false }
+                            }
                         },
-                        "layout": { "x": 8, "y": 18, "width": 4, "height": 2 }
+                        "layout": { "x": 8, "y": 20, "width": 4, "height": 2 }
                     },
                     {
                         "id": 4232408127775556,
@@ -1684,63 +1660,30 @@
                             "show_legend": true,
                             "legend_layout": "horizontal",
                             "legend_columns": ["avg", "min", "max", "value", "sum"],
-                            "time": {},
                             "type": "timeseries",
                             "requests": [{
                                 "formulas": [{
-                                        "alias": "Sui Network Peers",
-                                        "number_format": {
-                                            "unit": {
-                                                "type": "custom_unit_label",
-                                                "label": "peers"
-                                            }
-                                        },
-                                        "formula": "query1"
+                                    "alias": "Sui Network Peers",
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "custom_unit_label",
+                                            "label": "peers"
+                                        }
                                     },
-                                    {
-                                        "alias": "Worker Network Peers",
-                                        "number_format": {
-                                            "unit": {
-                                                "type": "custom_unit_label",
-                                                "label": "peers"
-                                            }
-                                        },
-                                        "formula": "query2"
-                                    },
-                                    {
-                                        "alias": "Primary Network Peers",
-                                        "number_format": {
-                                            "unit": {
-                                                "type": "custom_unit_label",
-                                                "label": "peers"
-                                            }
-                                        },
-                                        "formula": "query3"
-                                    }
-                                ],
+                                    "formula": "query1"
+                                }],
                                 "queries": [{
-                                        "data_source": "metrics",
-                                        "name": "query1",
-                                        "query": "avg:sui.validator.sui_network_peers{$env, $name, $service, $chain_id}"
-                                    },
-                                    {
-                                        "data_source": "metrics",
-                                        "name": "query2",
-                                        "query": "avg:sui.validator.worker_network_peers{$env, $name, $service, $chain_id}"
-                                    },
-                                    {
-                                        "data_source": "metrics",
-                                        "name": "query3",
-                                        "query": "avg:sui.validator.primary_network_peers{$env, $name, $service, $chain_id}"
-                                    }
-                                ],
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "avg:sui.validator.sui_network_peers{$env, $name, $service, $chain_id}"
+                                }],
                                 "response_format": "timeseries",
                                 "style": {
-                                    "palette": "cool",
+                                    "palette": "dog_classic",
                                     "line_type": "solid",
                                     "line_width": "normal"
                                 },
-                                "display_type": "line"
+                                "display_type": "bars"
                             }],
                             "markers": [{
                                     "label": " < 50 peers ",
@@ -1759,7 +1702,7 @@
                                 }
                             ]
                         },
-                        "layout": { "x": 0, "y": 20, "width": 4, "height": 4 }
+                        "layout": { "x": 0, "y": 22, "width": 4, "height": 4 }
                     },
                     {
                         "id": 349825323284130,
@@ -1770,7 +1713,6 @@
                             "show_legend": true,
                             "legend_layout": "horizontal",
                             "legend_columns": ["avg", "min", "max", "value", "sum"],
-                            "time": {},
                             "type": "timeseries",
                             "requests": [{
                                 "formulas": [{
@@ -1797,16 +1739,183 @@
                                 "display_type": "bars"
                             }],
                             "markers": [{
-                                "label": " = 0 % ",
-                                "value": "y = 0",
-                                "display_type": "error dashed"
+                                "label": " > 0% ",
+                                "value": "y > 0",
+                                "display_type": "ok dashed"
                             }]
                         },
-                        "layout": { "x": 4, "y": 20, "width": 4, "height": 4 }
+                        "layout": { "x": 4, "y": 22, "width": 4, "height": 4 }
+                    },
+                    {
+                        "id": 6405133194941106,
+                        "definition": {
+                            "title": "Checkpoint Execution Errors",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "canonical_unit",
+                                            "unit_name": "error"
+                                        }
+                                    },
+                                    "formula": "query1"
+                                }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:sui.validator.checkpoint_exec_errors.count{$env,$name,$service,$chain_id}.as_count()",
+                                    "aggregator": "sum"
+                                }],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_red"
+                                    },
+                                    {
+                                        "comparator": "=",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    }
+                                ]
+                            }],
+                            "autoscale": true,
+                            "precision": 0,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "area"
+                            }
+                        },
+                        "layout": { "x": 8, "y": 22, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 6964952064381670,
+                        "definition": {
+                            "title": "Consensus Round Prober Request Errors",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "canonical_unit",
+                                            "unit_name": "error"
+                                        }
+                                    },
+                                    "formula": "query1"
+                                }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:sui.validator.consensus_round_prober_request_errors.count{$env,$name,$service,$chain_id}.as_count()",
+                                    "aggregator": "sum"
+                                }],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_yellow"
+                                    },
+                                    {
+                                        "comparator": "=",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    }
+                                ]
+                            }],
+                            "autoscale": true,
+                            "precision": 0,
+                            "timeseries_background": {
+                                "type": "area",
+                                "yaxis": { "include_zero": false }
+                            }
+                        },
+                        "layout": { "x": 8, "y": 24, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 1839395632974764,
+                        "definition": {
+                            "type": "note",
+                            "content": "Pruning",
+                            "background_color": "blue",
+                            "font_size": "24",
+                            "text_align": "center",
+                            "vertical_align": "center",
+                            "show_tick": true,
+                            "tick_pos": "50%",
+                            "tick_edge": "bottom"
+                        },
+                        "layout": { "x": 0, "y": 26, "width": 4, "height": 1 }
+                    },
+                    {
+                        "id": 3406240904064886,
+                        "definition": {
+                            "title": "Last Pruned Epoch",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "response_format": "scalar",
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:sui.validator.last_pruned_consensus_db_epoch{$env,$name,$service,$chain_id}",
+                                    "aggregator": "last"
+                                }],
+                                "conditional_formats": [{
+                                    "comparator": ">",
+                                    "value": 0,
+                                    "palette": "white_on_green"
+                                }],
+                                "formulas": [{ "formula": "query1" }]
+                            }],
+                            "autoscale": false,
+                            "precision": 0,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "area"
+                            }
+                        },
+                        "layout": { "x": 0, "y": 27, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 8406208045300052,
+                        "definition": {
+                            "title": "Last Pruned Effect Checkpoint",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "response_format": "scalar",
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:sui.validator.last_pruned_effects_checkpoint{$env,$name,$service,$chain_id}",
+                                    "aggregator": "last"
+                                }],
+                                "conditional_formats": [{
+                                    "comparator": ">",
+                                    "value": 0,
+                                    "palette": "white_on_green"
+                                }],
+                                "formulas": [{ "formula": "query1" }]
+                            }],
+                            "autoscale": false,
+                            "precision": 0,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "area"
+                            }
+                        },
+                        "layout": { "x": 0, "y": 29, "width": 4, "height": 2 }
                     }
                 ]
             },
-            "layout": { "x": 0, "y": 25, "width": 12, "height": 25 }
+            "layout": { "x": 0, "y": 26, "width": 12, "height": 32 }
         }
     ],
     "template_variables": [{
