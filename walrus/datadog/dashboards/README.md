@@ -2,15 +2,15 @@
 
 ## Purpose
 
-This module allows for the easy generation of Datadog Dashboards to monitor and visualize the performance and statistics of SUI Validators. The purpose of this module creates the following Datadog Dashboards:
+This module allows for the easy generation of Datadog Dashboards to monitor and visualize the performance and statistics of Walrus Storage Nodes. The purpose of this module creates the following Datadog Dashboards:
 
-- SUI Validator Performance ans Stats
+- Walrus Storage Node Performance
 
 ## Usage example
 
 ```hcl
-module "datadog-dashboards-sui" {
-  source = "./sui-terraform-modules/datadog/dashboards"
+module "datadog-dashboards-walrus" {
+  source = "./walrus-terraform-modules/datadog/dashboards"
 }
 ```
 

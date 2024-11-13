@@ -6,21 +6,23 @@ Welcome to the Terraform Modules for SUI Network, your all-in-one solution for d
 
 ## Key Features
 - **Infrastructure Deployment:** Easily deploy and manage your SUI network infrastructure using modular and scalable Terraform modules.
-- **Comprehensive Monitoring:** Gain full visibility into your network's performance with built-in Datadog monitors, alerts, and Service Level Objectives (SLOs) created based on requirements provided by SUI Foundation and Mysten Labs.
-- **Validator and Full Node Observability:** Monitor the performance of your validators and full nodes with detailed metrics and dashboards.
-- **Network Overview:** Get a comprehensive overview of your SUI network's health and status with ease.
+- **Comprehensive Monitoring:** Gain full visibility into the performance of both networks with built-in Datadog monitors, alerts, and Service Level Objectives (SLOs) developed based on requirements provided by SUI Foundation and Mysten Labs.
+- **Validator, Full Node, and Storage Node Observability:** Monitor the performance of your SUI validators, full nodes, and Walrus storage nodes with detailed metrics and dashboards.
+- **Network Overview:** Get a comprehensive overview of the health and status of both SUI and Walrus networks with ease.
 
-With these modules, you can create SLO monitors that adhere to the standards and requirements set by SUI Foundation and Mysten Labs. Ensure the reliability and efficiency of your SUI network while maintaining full control and customization over your monitoring and alerting processes.
+With these modules, you can create SLO monitors that align with the standards and requirements set by SUI Foundation and Mysten Labs. Ensure the reliability and efficiency of your SUI and Walrus infrastructure while maintaining full control and customization over monitoring and alerting processes.
 
-Get started today and take your SUI infrastructure management to the next level with Terraform Modules for SUI Network.
+Get started today and elevate your infrastructure management for SUI and Walrus with these Terraform Modules.
 
 ## Modules
 
-This repository is organized into modules, each residing in its respective subdirectory. Each subdirectory contains a README file providing comprehensive details about the Terraform modules. These README files cover essential information, including module dependencies, input variables, output details, and precise deployment instructions to ensure successful utilization of the modules.
+This repository is organized into individual modules located in respective subdirectories. Each subdirectory includes a README file with comprehensive information on module dependencies, input variables, output details, and deployment instructions to guide successful usage.
 
-To explore and gain a deeper understanding of any specific module, please navigate to the corresponding subdirectory and refer to the dedicated README file. Below is a list of subdirectories within this repository:
+### Module List
 
-- [Datadog](./datadog/): The Datadog directory hosts Terraform modules designed for deploying and managing Datadog resources. These resources encompass dashboards, monitors, alerts, Service Level Objectives (SLOs), and various other components tailored for the SUI network and its entities. For comprehensive insights into each module's requirements, input parameters, output details, and step-by-step deployment instructions, please consult the README file in the Datadog directory.
+- [Sui](./sui): Contains modules for deploying and monitoring SUI network infrastructure, including configurations for validator and full node observability. Refer to the README for detailed information on Datadog resources, dashboards, and alerts tailored for the SUI ecosystem.
+
+- [Walrus](./walrus): Contains modules specifically for monitoring Walrus network infrastructure, with Datadog configurations that track node performance metrics. The README includes details on module requirements, input parameters, and step-by-step deployment instructions.
 
 Please select the module that aligns with your needs and consult its dedicated README for an extensive overview of its usage and deployment guidelines.
 

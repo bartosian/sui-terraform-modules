@@ -1,0 +1,132 @@
+init_config:
+instances:
+  - openmetrics_endpoint: "<VALIDATOR_METRICS_ENDPOINT>"
+    namespace: "sui.validator"
+    metrics:
+      # The current epoch the validator is synced to - gauge
+      - "current_epoch"
+      # Total duration of the current epoch - gauge
+      - "epoch_total_duration"
+      # The current round the validator will propose - gauge
+      - "current_round"
+      # Highest round received by the primary - gauge
+      - "highest_received_round"
+      # Most recent round committed by consensus - gauge
+      - "consensus_last_committed_leader_round"
+      # Number of consensus messages committed, sliced by author - gauge
+      - "consensus_committed_messages"
+      # Highest round where a block has been accepted - gauge
+      - "consensus_highest_accepted_round"
+      # Current threshold clock round - gauge
+      - "consensus_threshold_clock_round"
+      # Total number of proposed blocks - counter
+      - "consensus_proposed_blocks"
+      # Number of blocks received from peers that are verified - counter
+      - "consensus_verified_blocks"
+      # Highest round processed by the primary - gauge
+      - "highest_processed_round"
+      # Current voting right of the validator - gauge
+      - "current_voting_right"
+      # Number of certificates created by the validator - counter
+      - "certificates_created"
+      # Number of certificates processed (own + others) - counter
+      - "certificates_processed"
+      # Number of calls to handle_certificate - counter
+      - "total_handle_certificate_attempts"
+      # Highest known checkpoint - gauge
+      - "highest_known_checkpoint"
+      # Last executed checkpoint by the validator - gauge
+      - "last_executed_checkpoint"
+      # Age of the last executed checkpoint (sum) - counter
+      - "last_executed_checkpoint_age_ms_sum"
+      # Count of last executed checkpoint ages - counter
+      - "last_executed_checkpoint_age_ms_count"
+      # Age of the last executed checkpoint - gauge
+      - "last_executed_checkpoint_age_ms"
+      # Timestamp of last executed checkpoint - gauge
+      - "last_executed_checkpoint_timestamp_ms"
+      # Highest synced checkpoint - gauge
+      - "highest_synced_checkpoint"
+      # Highest verified checkpoint - gauge
+      - "highest_verified_checkpoint"
+      # Last certified checkpoint - gauge
+      - "last_certified_checkpoint"
+      # Last pruned effects checkpoint - gauge
+      - "last_pruned_effects_checkpoint"
+      # Number of epochs to retain for checkpoints - gauge
+      - "num_epochs_to_retain_for_checkpoints"
+      # Number of successfully sequenced certificates - counter
+      - "sequencing_certificate_success"
+      # Inflight requests to sequence certificates - gauge
+      - "sequencing_certificate_inflight"
+      # Attempts to sequence certificates - counter
+      - "sequencing_certificate_attempt"
+      # Certificates enqueued to TransactionManager - counter
+      - "transaction_manager_num_enqueued_certificates"
+      # Transactions included in a checkpoint - counter
+      - "transactions_included_in_checkpoint"
+      # Total transaction certificates handled - counter
+      - "total_transaction_certificates"
+      # Total number of transaction orders - counter
+      - "total_transaction_orders"
+      # Number of transactions involving shared objects - counter
+      - "num_shared_obj_tx"
+      # Total number of transaction effects produced - counter
+      - "total_transaction_effects"
+      # Latency of handling a consensus transaction certificate - histogram
+      - "validator_service_handle_certificate_consensus_latency"
+      # Sum of latencies for handling consensus certificates - counter
+      - "validator_service_handle_certificate_consensus_latency_sum"
+      # Count of consensus certificate handling attempts - counter
+      - "validator_service_handle_certificate_consensus_latency_count"
+      # Latency of handling a non-consensus transaction certificate - gauge
+      - "validator_service_handle_certificate_non_consensus_latency"
+      # Sum of latencies for handling non-consensus certificates - counter
+      - "validator_service_handle_certificate_non_consensus_latency_sum"
+      # Count of non-consensus certificate handling attempts - counter
+      - "validator_service_handle_certificate_non_consensus_latency_count"
+      # Latency for sequencing a certificate - histogram
+      - "sequencing_certificate_latency"
+      # Latency of receiving quorum - histogram
+      - "consensus_quorum_receive_latency"
+      # Number of connected sui peers - gauge
+      - "sui_network_peers"
+      # Number of connected worker peers - gauge
+      - "worker_network_peers"
+      # Number of connected primary peers - gauge
+      - "primary_network_peers"
+      # Connection status of a peer (0 for disconnected, 1 for connected) - gauge
+      - "primary_network_peer_connected"
+      # Number of inbound requests on the network - counter
+      - "sui_inbound_requests"
+      # Number of outbound requests on the network - counter
+      - "sui_outbound_requests"
+      # Number of errors by route in outbound requests - counter
+      - "sui_outbound_request_errors"
+      # Number of timeouts probing peers - counter
+      - "consensus_round_prober_request_errors"
+      # Checkpoint execution errors - counter
+      - "checkpoint_exec_errors"
+      # Number of transaction signature errors - counter
+      - "total_signature_errors"
+      # Number of skipped consensus transactions - counter
+      - "skipped_consensus_txns"
+      # Uptime of the validator in seconds - counter
+      - "uptime"
+      # Number of epochs to retain for objects - gauge
+      - "num_epochs_to_retain_for_objects"
+      # Number of parallel worker batches currently processed by the worker - gauge
+      - "parallel_worker_batches"
+      # Number of pruned objects per transaction - counter
+      - "num_input_objects_count"
+      # Flag indicating whether the network is running in safe mode - gauge
+      - "is_safe_mode"
+      # Latency between batch creation and inclusion in a header proposal - histogram
+      - "proposer_batch_latency"
+      # The last epoch for which the consensus store was pruned - gauge
+      - "last_pruned_consensus_db_epoch"
+    tags:
+      - "name:<VALIDATOR_NAME>"       
+      - "env:<VALIDATOR_NETWORK>"  
+      - "service:validator"
+      - "chain_id:<VALIDATOR_CHAIN_ID>"

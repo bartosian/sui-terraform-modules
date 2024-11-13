@@ -1,0 +1,40 @@
+init_config:
+instances:
+  - openmetrics_endpoint: "<NODE_METRICS_ENDPOINT>"
+    namespace: "walrus"
+    metrics:
+      #  Unencoded size (in bytes) of the blob associated with uploaded metadata - histogram
+      - "walrus_uploaded_metadata_unencoded_blob_bytes"
+      # The total number of storage confirmations issued - counter
+      - "walrus_storage_confirmations_issued"
+      # The total number of slivers stored - counter
+      - "walrus_slivers_stored"
+      # Total number of sliver instances returned - counter
+      - "walrus_slivers_retrieved"
+      # The number shards currently owned by this node - gauge
+      - "walrus_shards_owned"
+      # The total number of metadata stored - counter
+      - "walrus_metadata_stored"
+      # The total number of metadata instances returned - counter
+      - "walrus_metadata_retrieved"
+      # The number of Walrus events processed - gauge
+      - "walrus_event_cursor_progress"
+      # The state of the current walrus epoch - gauge
+      - "walrus_current_epoch_state"
+      # The current Walrus epoch - gauge
+      - "walrus_current_epoch"
+      # Walrus binary info - gauge
+      - "walrus_build_info"
+      # Uptime of the node service in seconds - counter
+      - "uptime"
+      # Total number of checkpoints downloaded - counter
+      - "event_processor_total_downloaded_checkpoints"
+      # Latest downloaded full checkpoint - gauge
+      - "event_processor_latest_downloaded_checkpoint"
+      # Current checkpoint lag between local store and full node - gauge
+      - "checkpoint_downloader_checkpoint_lag"
+      # The number of blob recoveries currently pending - gauge
+      - "walrus_recover_blob_backlog"
+    tags:
+      - "env:<NODE_NETWORK>"
+      - "process:walrus_node"

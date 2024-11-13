@@ -1,0 +1,954 @@
+{
+    "title": "🦭 WALRUS NODE",
+    "description": "The Walrus Storage Node Performance Metrics Dashboard provides a comprehensive view of the performance and reliability of individual Walrus storage nodes. It offers real-time insights into critical node-specific metrics, monitors Service Level Objectives (SLOs), and delivers timely alerts to ensure the seamless operation of each storage node within the ecosystem.",
+    "widgets": [{
+            "id": 2965584814902680,
+            "definition": {
+                "title": "Monitors",
+                "background_color": "vivid_blue",
+                "show_title": true,
+                "type": "group",
+                "layout_type": "ordered",
+                "widgets": [{
+                    "id": 3837072400589002,
+                    "definition": {
+                        "title": "Monitors List",
+                        "type": "manage_status",
+                        "display_format": "countsAndList",
+                        "color_preference": "background",
+                        "hide_zero_counts": false,
+                        "show_status": true,
+                        "last_triggered_format": "relative",
+                        "query": "metric:walrus*",
+                        "sort": "status,asc",
+                        "count": 50,
+                        "start": 0,
+                        "summary_type": "monitors",
+                        "show_priority": true,
+                        "show_last_triggered": true
+                    },
+                    "layout": { "x": 0, "y": 0, "width": 12, "height": 6 }
+                }]
+            },
+            "layout": { "x": 0, "y": 0, "width": 12, "height": 7 }
+        },
+        {
+            "id": 906795838884934,
+            "definition": {
+                "title": "Overview",
+                "background_color": "vivid_blue",
+                "show_title": true,
+                "type": "group",
+                "layout_type": "ordered",
+                "widgets": [{
+                        "id": 2714710306815430,
+                        "definition": {
+                            "title": "Build Info",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_table",
+                            "requests": [{
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:walrus.walrus_build_info{process:walrus_node, env:testnet} by {process,env,version,endpoint,host}",
+                                    "aggregator": "max"
+                                }],
+                                "response_format": "scalar",
+                                "sort": {
+                                    "count": 5,
+                                    "order_by": [
+                                        { "type": "formula", "index": 0, "order": "desc" }
+                                    ]
+                                },
+                                "formulas": [{
+                                    "conditional_formats": [{
+                                            "comparator": ">",
+                                            "value": 0,
+                                            "palette": "white_on_green"
+                                        },
+                                        {
+                                            "comparator": "<",
+                                            "value": 0,
+                                            "palette": "white_on_red"
+                                        }
+                                    ],
+                                    "cell_display_mode": "number",
+                                    "alias": "active",
+                                    "formula": "query1"
+                                }]
+                            }],
+                            "has_search_bar": "never"
+                        },
+                        "layout": { "x": 0, "y": 0, "width": 12, "height": 2 }
+                    },
+                    {
+                        "id": 1285525049984878,
+                        "definition": {
+                            "type": "note",
+                            "content": "Epoch",
+                            "background_color": "blue",
+                            "font_size": "24",
+                            "text_align": "center",
+                            "vertical_align": "center",
+                            "show_tick": true,
+                            "tick_pos": "50%",
+                            "tick_edge": "right"
+                        },
+                        "layout": { "x": 0, "y": 2, "width": 4, "height": 1 }
+                    },
+                    {
+                        "id": 2216133589372366,
+                        "definition": {
+                            "type": "note",
+                            "content": "Uptime",
+                            "background_color": "green",
+                            "font_size": "24",
+                            "text_align": "center",
+                            "vertical_align": "center",
+                            "show_tick": true,
+                            "tick_pos": "50%",
+                            "tick_edge": "right"
+                        },
+                        "layout": { "x": 4, "y": 2, "width": 4, "height": 1 }
+                    },
+                    {
+                        "id": 8643357842508610,
+                        "definition": {
+                            "type": "note",
+                            "content": "Events",
+                            "background_color": "yellow",
+                            "font_size": "24",
+                            "text_align": "center",
+                            "vertical_align": "center",
+                            "show_tick": true,
+                            "tick_pos": "50%",
+                            "tick_edge": "bottom"
+                        },
+                        "layout": { "x": 8, "y": 2, "width": 4, "height": 1 }
+                    },
+                    {
+                        "id": 6538161987125706,
+                        "definition": {
+                            "title": "Epoch",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "response_format": "scalar",
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:walrus.walrus_current_epoch{process:walrus_node, env:testnet}",
+                                    "aggregator": "last"
+                                }],
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
+                                "formulas": [{ "formula": "query1" }]
+                            }],
+                            "autoscale": true,
+                            "precision": 0,
+                            "timeseries_background": { "yaxis": {}, "type": "bars" }
+                        },
+                        "layout": { "x": 0, "y": 3, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 5292372254685524,
+                        "definition": {
+                            "title": "Uptime",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "response_format": "scalar",
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:walrus.uptime.count{process:walrus_node, env:testnet}.as_count()",
+                                    "aggregator": "sum"
+                                }],
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ],
+                                "formulas": [{
+                                    "number_format": {
+                                        "unit": { "label": "days", "type": "custom_unit_label" }
+                                    },
+                                    "formula": "query1 / 86400"
+                                }]
+                            }],
+                            "autoscale": false,
+                            "precision": 2,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "bars"
+                            }
+                        },
+                        "layout": { "x": 4, "y": 3, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 7840245475561476,
+                        "definition": {
+                            "title": "Event Cursor Progress Persisted",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{ "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:walrus.walrus_event_cursor_progress{state:persisted, process:walrus_node, env:testnet}",
+                                    "aggregator": "last"
+                                }],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ]
+                            }],
+                            "autoscale": false,
+                            "precision": 0,
+                            "timeseries_background": { "yaxis": {}, "type": "bars" }
+                        },
+                        "layout": { "x": 8, "y": 3, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 3212963765878498,
+                        "definition": {
+                            "title": "Epoch State",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_table",
+                            "requests": [{
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:walrus.walrus_current_epoch_state{process:walrus_node, env:testnet} by {state}",
+                                    "aggregator": "max"
+                                }],
+                                "response_format": "scalar",
+                                "sort": {
+                                    "count": 5,
+                                    "order_by": [
+                                        { "type": "formula", "index": 0, "order": "desc" }
+                                    ]
+                                },
+                                "formulas": [{
+                                    "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "custom_bg",
+                                        "custom_bg_color": "#94cbff"
+                                    }],
+                                    "cell_display_mode": "number",
+                                    "alias": "active",
+                                    "formula": "query1"
+                                }]
+                            }],
+                            "has_search_bar": "never"
+                        },
+                        "layout": { "x": 0, "y": 5, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 8639725195342704,
+                        "definition": {
+                            "title": "Uptime",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": false,
+                            "legend_layout": "auto",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "canonical_unit",
+                                            "unit_name": "second"
+                                        }
+                                    },
+                                    "alias": "Uptime",
+                                    "formula": "query1"
+                                }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:walrus.uptime.count{process:walrus_node, env:testnet}.as_count()"
+                                }],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "dog_classic",
+                                    "order_by": "values",
+                                    "order_reverse": false,
+                                    "line_type": "solid",
+                                    "line_width": "normal"
+                                },
+                                "display_type": "bars"
+                            }]
+                        },
+                        "layout": { "x": 4, "y": 5, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 2147762273834928,
+                        "definition": {
+                            "title": "Event Cursor Progress By State",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": true,
+                            "legend_layout": "auto",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{
+                                    "style": { "palette": "dog_classic" },
+                                    "formula": "query1"
+                                }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:walrus.walrus_event_cursor_progress{process:walrus_node, env:testnet} by {state}"
+                                }],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "dog_classic",
+                                    "order_by": "values",
+                                    "line_type": "dotted",
+                                    "line_width": "normal"
+                                },
+                                "display_type": "bars"
+                            }]
+                        },
+                        "layout": { "x": 8, "y": 5, "width": 4, "height": 2 }
+                    }
+                ]
+            },
+            "layout": { "x": 0, "y": 7, "width": 12, "height": 8 }
+        },
+        {
+            "id": 6356301028025336,
+            "definition": {
+                "title": "Checkpoints",
+                "background_color": "vivid_blue",
+                "show_title": true,
+                "type": "group",
+                "layout_type": "ordered",
+                "widgets": [{
+                        "id": 932098662019014,
+                        "definition": {
+                            "title": "Total Downloaded Checkpoint ",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{ "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:walrus.event_processor_total_downloaded_checkpoints.count{process:walrus_node, env:testnet}.as_count()",
+                                    "aggregator": "sum"
+                                }],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ]
+                            }],
+                            "autoscale": false,
+                            "precision": 0,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "bars"
+                            }
+                        },
+                        "layout": { "x": 0, "y": 0, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 7113676462564200,
+                        "definition": {
+                            "title": "Latest Downloaded Checkpoint ",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{ "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:walrus.event_processor_latest_downloaded_checkpoint{process:walrus_node, env:testnet}",
+                                    "aggregator": "last"
+                                }],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "<", "value": 0, "palette": "white_on_red" }
+                                ]
+                            }],
+                            "autoscale": false,
+                            "precision": 0,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "area"
+                            }
+                        },
+                        "layout": { "x": 4, "y": 0, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 7298666276904534,
+                        "definition": {
+                            "title": "Checkpoint Downloader Lag",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{ "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:walrus.checkpoint_downloader_checkpoint_lag{process:walrus_node, env:testnet}",
+                                    "aggregator": "last"
+                                }],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">=",
+                                        "value": 50,
+                                        "palette": "white_on_red"
+                                    },
+                                    {
+                                        "comparator": "<",
+                                        "value": 50,
+                                        "palette": "white_on_green"
+                                    }
+                                ]
+                            }],
+                            "autoscale": true,
+                            "precision": 0,
+                            "timeseries_background": { "yaxis": {}, "type": "bars" }
+                        },
+                        "layout": { "x": 8, "y": 0, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 6282007349283982,
+                        "definition": {
+                            "title": "Total Downloaded Checkpoint ",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": false,
+                            "legend_layout": "auto",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{ "alias": "Checkpoints", "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:walrus.event_processor_total_downloaded_checkpoints.count{process:walrus_node, env:testnet}.as_count()"
+                                }],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "dog_classic",
+                                    "order_by": "values",
+                                    "line_type": "solid",
+                                    "line_width": "normal"
+                                },
+                                "display_type": "bars"
+                            }]
+                        },
+                        "layout": { "x": 0, "y": 2, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 4284948181662020,
+                        "definition": {
+                            "title": "Latest Downloaded Checkpoint ",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": false,
+                            "legend_layout": "auto",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{ "alias": "Checkpoints", "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:walrus.event_processor_latest_downloaded_checkpoint{process:walrus_node, env:testnet}"
+                                }],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "dog_classic",
+                                    "order_by": "values",
+                                    "line_type": "solid",
+                                    "line_width": "normal"
+                                },
+                                "display_type": "bars"
+                            }]
+                        },
+                        "layout": { "x": 4, "y": 2, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 6811962142420852,
+                        "definition": {
+                            "title": "Checkpoint Downloader Lag",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": false,
+                            "legend_layout": "auto",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{ "alias": "Checkpoints", "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:walrus.checkpoint_downloader_checkpoint_lag{process:walrus_node, env:testnet}"
+                                }],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "dog_classic",
+                                    "order_by": "values",
+                                    "line_type": "solid",
+                                    "line_width": "normal"
+                                },
+                                "display_type": "bars"
+                            }]
+                        },
+                        "layout": { "x": 8, "y": 2, "width": 4, "height": 2 }
+                    }
+                ]
+            },
+            "layout": { "x": 0, "y": 15, "width": 12, "height": 5 }
+        },
+        {
+            "id": 668292027130970,
+            "definition": {
+                "title": "Shards & Slivers",
+                "background_color": "vivid_blue",
+                "show_title": true,
+                "type": "group",
+                "layout_type": "ordered",
+                "widgets": [{
+                        "id": 5885557849746534,
+                        "definition": {
+                            "title": "Shards Owned",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{ "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:walrus.walrus_shards_owned{process:walrus_node, env:testnet}",
+                                    "aggregator": "last"
+                                }],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ]
+                            }],
+                            "autoscale": false,
+                            "precision": 0,
+                            "timeseries_background": { "yaxis": {}, "type": "bars" }
+                        },
+                        "layout": { "x": 0, "y": 0, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 611240035716678,
+                        "definition": {
+                            "title": "Slivers Stored",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{ "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:walrus.walrus_slivers_stored.count{process:walrus_node, env:testnet}.as_count()",
+                                    "aggregator": "sum"
+                                }],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "<", "value": 0, "palette": "white_on_red" }
+                                ]
+                            }],
+                            "autoscale": false,
+                            "precision": 0,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "bars"
+                            }
+                        },
+                        "layout": { "x": 4, "y": 0, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 2475147710709778,
+                        "definition": {
+                            "title": "Slivers Retrieved",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{ "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:walrus.walrus_slivers_retrieved.count{process:walrus_node, env:testnet}.as_count()",
+                                    "aggregator": "sum"
+                                }],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ]
+                            }],
+                            "autoscale": true,
+                            "precision": 0,
+                            "timeseries_background": { "yaxis": {}, "type": "bars" }
+                        },
+                        "layout": { "x": 8, "y": 0, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 4806205247673188,
+                        "definition": {
+                            "title": "Shards Owned",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": true,
+                            "legend_layout": "auto",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{
+                                    "alias": "Shards",
+                                    "style": { "palette": "classic", "palette_index": 0 },
+                                    "formula": "query1"
+                                }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "max:walrus.walrus_shards_owned{process:walrus_node, env:testnet}"
+                                }],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "dog_classic",
+                                    "order_by": "values",
+                                    "line_type": "solid",
+                                    "line_width": "normal"
+                                },
+                                "display_type": "bars"
+                            }]
+                        },
+                        "layout": { "x": 0, "y": 2, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 1888266125991360,
+                        "definition": {
+                            "title": "Slivers Stored",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": true,
+                            "legend_layout": "auto",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{ "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:walrus.walrus_slivers_stored.count{process:walrus_node, env:testnet} by {sliver_type}.as_count()"
+                                }],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "dog_classic",
+                                    "order_by": "values",
+                                    "line_type": "solid",
+                                    "line_width": "normal"
+                                },
+                                "display_type": "bars"
+                            }]
+                        },
+                        "layout": { "x": 4, "y": 2, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 5427123305425208,
+                        "definition": {
+                            "title": "Slivers Retrieved",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": true,
+                            "legend_layout": "auto",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{ "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:walrus.walrus_slivers_retrieved.count{process:walrus_node, env:testnet} by {sliver_type}.as_count()"
+                                }],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "dog_classic",
+                                    "order_by": "values",
+                                    "line_type": "solid",
+                                    "line_width": "normal"
+                                },
+                                "display_type": "bars"
+                            }]
+                        },
+                        "layout": { "x": 8, "y": 2, "width": 4, "height": 2 }
+                    }
+                ]
+            },
+            "layout": { "x": 0, "y": 20, "width": 12, "height": 5 }
+        },
+        {
+            "id": 8504311304055430,
+            "definition": {
+                "title": "Metadata",
+                "background_color": "vivid_blue",
+                "show_title": true,
+                "type": "group",
+                "layout_type": "ordered",
+                "widgets": [{
+                        "id": 3074078797103984,
+                        "definition": {
+                            "title": "Metadata Stored",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{ "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:walrus.walrus_metadata_stored.count{process:walrus_node, env:testnet}.as_count()",
+                                    "aggregator": "sum"
+                                }],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ]
+                            }],
+                            "autoscale": false,
+                            "precision": 0,
+                            "timeseries_background": { "yaxis": {}, "type": "bars" }
+                        },
+                        "layout": { "x": 0, "y": 0, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 7595075063024462,
+                        "definition": {
+                            "title": "Metadata Retrieved",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{ "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:walrus.walrus_metadata_retrieved.count{process:walrus_node, env:testnet}.as_count()",
+                                    "aggregator": "sum"
+                                }],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ]
+                            }],
+                            "autoscale": false,
+                            "precision": 0,
+                            "timeseries_background": {
+                                "yaxis": { "include_zero": false },
+                                "type": "bars"
+                            }
+                        },
+                        "layout": { "x": 4, "y": 0, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 7994607445925950,
+                        "definition": {
+                            "title": "Uploaded Metadata",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "type": "query_value",
+                            "requests": [{
+                                "formulas": [{
+                                    "number_format": {
+                                        "unit": {
+                                            "type": "canonical_unit",
+                                            "unit_name": "byte_in_bits_family"
+                                        }
+                                    },
+                                    "formula": "query1 / query2"
+                                }],
+                                "queries": [{
+                                        "data_source": "metrics",
+                                        "name": "query1",
+                                        "query": "sum:walrus.walrus_uploaded_metadata_unencoded_blob_bytes.sum{process:walrus_node, env:testnet}.as_count()",
+                                        "aggregator": "sum"
+                                    },
+                                    {
+                                        "data_source": "metrics",
+                                        "name": "query2",
+                                        "query": "sum:walrus.walrus_uploaded_metadata_unencoded_blob_bytes.count{process:walrus_node, env:testnet}.as_count()",
+                                        "aggregator": "sum"
+                                    }
+                                ],
+                                "response_format": "scalar",
+                                "conditional_formats": [{
+                                        "comparator": ">",
+                                        "value": 0,
+                                        "palette": "white_on_green"
+                                    },
+                                    { "comparator": "=", "value": 0, "palette": "white_on_red" }
+                                ]
+                            }],
+                            "autoscale": true,
+                            "precision": 2,
+                            "timeseries_background": { "yaxis": {}, "type": "bars" }
+                        },
+                        "layout": { "x": 8, "y": 0, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 6663100467832154,
+                        "definition": {
+                            "title": "Metadata Stored",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": false,
+                            "legend_layout": "auto",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{ "alias": "Metadata", "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:walrus.walrus_metadata_stored.count{process:walrus_node, env:testnet}.as_count()"
+                                }],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "dog_classic",
+                                    "order_by": "values",
+                                    "line_type": "solid",
+                                    "line_width": "normal"
+                                },
+                                "display_type": "bars"
+                            }]
+                        },
+                        "layout": { "x": 0, "y": 2, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 5852877911207468,
+                        "definition": {
+                            "title": "Metadata Retrieved",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": true,
+                            "legend_layout": "auto",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{ "alias": "Metadata", "formula": "query1" }],
+                                "queries": [{
+                                    "data_source": "metrics",
+                                    "name": "query1",
+                                    "query": "sum:walrus.walrus_metadata_retrieved.count{process:walrus_node, env:testnet}.as_count()"
+                                }],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "dog_classic",
+                                    "order_by": "values",
+                                    "line_type": "solid",
+                                    "line_width": "normal"
+                                },
+                                "display_type": "bars"
+                            }]
+                        },
+                        "layout": { "x": 4, "y": 2, "width": 4, "height": 2 }
+                    },
+                    {
+                        "id": 3504115600644990,
+                        "definition": {
+                            "title": "Uploaded Metadata",
+                            "title_size": "16",
+                            "title_align": "left",
+                            "show_legend": true,
+                            "legend_layout": "auto",
+                            "legend_columns": ["avg", "min", "max", "value", "sum"],
+                            "type": "timeseries",
+                            "requests": [{
+                                "formulas": [{ "formula": "query1 / query2" }],
+                                "queries": [{
+                                        "data_source": "metrics",
+                                        "name": "query1",
+                                        "query": "sum:walrus.walrus_uploaded_metadata_unencoded_blob_bytes.sum{process:walrus_node, env:testnet}.as_count()"
+                                    },
+                                    {
+                                        "data_source": "metrics",
+                                        "name": "query2",
+                                        "query": "sum:walrus.walrus_uploaded_metadata_unencoded_blob_bytes.count{process:walrus_node, env:testnet}.as_count()"
+                                    }
+                                ],
+                                "response_format": "timeseries",
+                                "style": {
+                                    "palette": "dog_classic",
+                                    "order_by": "values",
+                                    "line_type": "solid",
+                                    "line_width": "normal"
+                                },
+                                "display_type": "bars"
+                            }]
+                        },
+                        "layout": { "x": 8, "y": 2, "width": 4, "height": 2 }
+                    }
+                ]
+            },
+            "layout": { "x": 0, "y": 25, "width": 12, "height": 5 }
+        }
+    ],
+    "template_variables": [],
+    "layout_type": "ordered",
+    "notify_list": [],
+    "template_variable_presets": [{ "name": "ALL", "template_variables": [] }],
+    "reflow_type": "fixed"
+}
