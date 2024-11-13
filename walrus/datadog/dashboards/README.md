@@ -1,4 +1,4 @@
-# SUI Datadog Dashboards
+# Walrus Datadog Dashboards
 
 ## Purpose
 

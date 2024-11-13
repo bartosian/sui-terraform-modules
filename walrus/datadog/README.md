@@ -1,6 +1,6 @@
-# SUI Terraform Datadog Modules
+# Walrus Terraform Datadog Modules
 
-## SUI Terraform Datadog Modules
+## Walrus Terraform Datadog Modules
 
 Welcome to the Walrus Terraform Datadog Modules directory. This directory is dedicated to providing Terraform modules that streamline the deployment of essential Datadog resources, empowering you to efficiently manage monitoring and observability for Walrus network entities. These modules are thoughtfully designed to enhance your monitoring capabilities and ensure a seamless experience when monitoring the Walrus network.
 
@@ -64,8 +64,6 @@ Explore the specialized modules available within this directory:
 
 - [**dashboards**](./dashboards/): This subdirectory contains Terraform modules tailored for creating and managing Datadog dashboards specifically configured to visualize critical data and insights related to the Walrus network and its components.
 
-- [**monitors**](./monitors/): Inside this subdirectory, you'll discover Terraform modules designed to facilitate the setup and management of Datadog monitors. These monitors play a crucial role in proactively detecting and alerting on performance issues and anomalies within the Walrus network.
-
 Feel free to navigate to the subdirectory that aligns with your specific monitoring needs. Each subdirectory's README provides detailed information on how to use the corresponding Terraform modules, along with configuration options and best practices.
 
 Choose the module that suits your requirements and leverage the power of Datadog for monitoring and ensuring the performance and reliability of the Walrus network.
@@ -76,20 +74,8 @@ Choose the module that suits your requirements and leverage the power of Datadog
 module "datadog_walrus_dashboards" {
   source = "./datadog/dashboards"
 }
-
-module "datadog_walrus_monitors" {
-  source = "./datadog/monitors"
-
-  name = "my_validator"
-  service = "validator"
-  chain_id = "4c78adac"
-  environment = "testnet"
-}
 ```
 
 This code snippet demonstrates how to use Terraform modules to deploy Datadog monitoring for the SUI Validator. It includes the following modules:
 
 - `datadog_walrus_dashboards`: Deploys Datadog dashboards.
-- `datadog_walrus_monitors`: Sets up Datadog monitors specific to the Walrus Storage Node.
-
-The configuration includes specifying the name, service, chain ID, and environment for the Walrus Storage Node, as well as associating monitors with specific metrics for monitoring and alerting. This example provides a comprehensive setup for monitoring Walrus Storage Node performance.
